@@ -1,6 +1,3 @@
-import { render } from "react-dom";
-
-import App from "./demo/App";
-
-const rootElement = document.getElementById("root");
-render(<App />, rootElement);
+export * from './hooks/use-mask';
+export * from './hooks/use-web-mask';
+export * from './components/masked-input';
