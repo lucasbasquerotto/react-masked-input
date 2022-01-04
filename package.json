@@ -1,7 +1,7 @@
 {
-  "name": "react-typescript",
+  "name": "react-masked-input",
   "version": "1.0.0",
-  "description": "React and TypeScript example starter project",
+  "description": "React masked input component and hooks",
   "keywords": [
     "typescript",
     "react",
