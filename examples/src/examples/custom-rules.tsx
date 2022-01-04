@@ -11,7 +11,8 @@ const createMaskGenerator = (mask: string) => ({
 	generateMask: () => mask,
 });
 
-const maskGenerator = createMaskGenerator('CCC-NNNN');
+const mask = 'CCC-NNNN';
+const maskGenerator = createMaskGenerator(mask);
 
 const CustomRules = () => {
 	const [value, setValue] = React.useState('');
@@ -23,6 +24,7 @@ const CustomRules = () => {
 				value={value}
 				onChange={setValue}
 			/>
+			<div>Mask: {mask}</div>
 			<div>Value (no mask):</div>
 			<div>{value}</div>
 		</div>
