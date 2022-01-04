@@ -734,6 +734,15 @@ const getExpectedCursorPos = (args: {
 	return { position, wentBack };
 };
 
+export interface UseMaskProps {
+	outerValue?: string;
+	maskGenerator?: MaskGenerator;
+	onChange?: (value: string) => void;
+	getCursorPosition?: () => number;
+	setCursorPosition?: (cursorPosition: number) => void;
+	keepMask?: boolean;
+}
+
 export const useMask = ({
 	outerValue,
 	maskGenerator,
@@ -741,14 +750,7 @@ export const useMask = ({
 	getCursorPosition,
 	setCursorPosition,
 	keepMask,
-}: {
-	outerValue?: string;
-	maskGenerator?: MaskGenerator;
-	onChange?: (value: string) => void;
-	getCursorPosition?: () => number;
-	setCursorPosition?: (cursorPosition: number) => void;
-	keepMask?: boolean;
-}) => {
+}: UseMaskProps) => {
 	const [value, setValue] = React.useState(outerValue);
 	const [lastValue, setLastValue] = React.useState(value);
 	const [displayValue, setDisplayValue] = React.useState(value);
@@ -799,7 +801,9 @@ export const useMask = ({
 	);
 
 	const changeDisplayValue = React.useCallback(
-		(value: string) => updateDisplayValue(value, true),
+		(value: string) => {
+			updateDisplayValue(value, true);
+		},
 		[updateDisplayValue],
 	);
 

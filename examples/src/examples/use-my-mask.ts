@@ -1,20 +1,21 @@
 import React from 'react';
-import type { MaskGenerator } from './use-mask';
-import { useRefMask } from './use-ref-mask';
+import { MaskGenerator, useRefMask } from 'react-hook-mask';
 
-export const useWebMask = ({
+export interface UseMyMaskProps {
+	maskGenerator?: MaskGenerator;
+	keepMask?: boolean;
+	value?: string;
+	onChange?: (value: string) => void;
+	ref?: React.ForwardedRef<HTMLInputElement>;
+}
+
+const useMyMask = ({
 	maskGenerator,
 	value,
 	onChange,
 	keepMask,
 	ref: outerRef,
-}: {
-	maskGenerator?: MaskGenerator;
-	value?: string;
-	onChange?: (value: string) => void;
-	keepMask?: boolean;
-	ref?: React.ForwardedRef<HTMLInputElement>;
-}) => {
+}: UseMyMaskProps) => {
 	const getCursorPosition = React.useCallback(
 		(el: HTMLInputElement | undefined) => {
 			const cursorPosition = el?.selectionStart ?? 0;
@@ -43,11 +44,7 @@ export const useWebMask = ({
 		ref: outerRef,
 	});
 
-	const handleOnChange: React.ChangeEventHandler<HTMLInputElement> =
-		React.useCallback(
-			(e) => setDisplayValue(e?.target?.value ?? ''),
-			[setDisplayValue],
-		);
-
-	return { value: displayValue, onChange: handleOnChange, ref };
+	return { value: displayValue, onChange: setDisplayValue, ref };
 };
+
+export default useMyMask;

@@ -1,12 +1,13 @@
 {
   "name": "react-hook-mask",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "React masked input component and hooks",
   "keywords": [
     "typescript",
     "react",
     "starter"
   ],
+  "source": "./src/index.ts",
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
   "types": "./lib/esm/index.d.ts",

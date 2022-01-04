@@ -12,7 +12,7 @@
     "react": "file:../node_modules/react",
     "react-dom": "file:../node_modules/react-dom",
     "react-scripts": "5.0.0",
-    "typescript-react-test": "file:.."
+    "react-hook-mask": "file:.."
   },
   "devDependencies": {
     "@types/react": "17.0.0",

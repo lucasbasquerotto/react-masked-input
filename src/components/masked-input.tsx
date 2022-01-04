@@ -9,22 +9,28 @@ export const MaskedInput = React.forwardRef(
 			value,
 			onChange,
 			keepMask,
-		}: {
+			...inputProps
+		}: Omit<
+			React.DetailedHTMLProps<
+				React.InputHTMLAttributes<HTMLInputElement>,
+				HTMLInputElement
+			>,
+			'onChange'
+		> & {
 			maskGenerator?: MaskGenerator;
 			keepMask?: boolean;
-			value?: string;
 			onChange?: (value: string) => void;
 		},
 		ref: React.ForwardedRef<HTMLInputElement> | undefined,
 	) => {
 		const maskProps = useWebMask({
 			maskGenerator,
-			value,
+			value: value != null ? `${value}` : undefined,
 			onChange,
 			keepMask,
 			ref,
 		});
 
-		return <input {...maskProps} />;
+		return <input {...inputProps} {...maskProps} />;
 	},
 );
