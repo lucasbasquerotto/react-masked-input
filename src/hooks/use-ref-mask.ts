@@ -1,5 +1,5 @@
 import React from 'react';
-import type { MaskGenerator } from './use-mask';
+import { MaskGenerator } from '../utils/mask-util';
 import { useMask } from './use-mask';
 
 const useCombinedRefs = <T>(

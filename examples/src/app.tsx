@@ -26,7 +26,7 @@ const CustomHookComponent = () => {
 
 	return (
 		<input
-			value={value}
+			value={value ?? ''}
 			onChange={(e) => onChange(e?.target?.value)}
 			ref={ref}
 		/>

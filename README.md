@@ -104,7 +104,9 @@ import { MaskedInput, DEFAULT_MASK_RULES } from 'react-hook-mask';
 const maskGenerator = {
 	rules: DEFAULT_MASK_RULES,
 	generateMask: (value) =>
-		(value?.length ?? 0) < 10 ? 'AAA-AAA-AAAA' : 'AAA-AAA-AAA-AAAA',
+		(value?.replaceAll('-', '').length ?? 0) <= 10
+			? 'AAA-AAA-AAAA'
+			: 'AAA-AAA-AAA-AAAA',
 	transform: (v) => v?.toUpperCase(),
 };
 
@@ -155,11 +157,11 @@ const CustomDOMComponent = React.forwardRef(
 			ref: outerRef,
 		});
 
-		// The properties myValue, myOnChange and myRef are just an example
+		// The properties myValue, myOnChange and myRef are just examples
 		return (
 			<MyInput
 				{...otherProps}
-				myValue={value}
+				myValue={value ?? ''}
 				myOnChange={onChange}
 				myRef={ref}
 			/>

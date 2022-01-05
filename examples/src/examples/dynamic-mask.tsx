@@ -7,7 +7,8 @@ const mask2 = 'AAA-AAAA-AAA-AAAA';
 const maskGenerator = {
 	rules: DEFAULT_MASK_RULES,
 	generateMask: (value: string) =>
-		(value?.replace('-', '')?.length ?? 0) <= 10 ? mask1 : mask2,
+		(value?.replaceAll('-', '').length ?? 0) <= 10 ? mask1 : mask2,
+	transform: (v: string) => v?.toUpperCase(),
 };
 
 const DynamicMask = () => {

@@ -1,6 +1,6 @@
-import type { MaskGenerator } from '../hooks/use-mask';
-import { useWebMask } from '../hooks/use-web-mask';
 import React from 'react';
+import { useWebMask } from '../hooks/use-web-mask';
+import { MaskGenerator } from '../utils/mask-util';
 
 export const MaskedInput = React.forwardRef(
 	(

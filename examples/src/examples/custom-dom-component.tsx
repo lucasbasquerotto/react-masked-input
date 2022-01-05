@@ -43,11 +43,11 @@ const CustomDOMComponent = React.forwardRef(
 			ref: outerRef,
 		});
 
-		// The properties myValue, myOnChange and myRef are just an example
+		// The properties myValue, myOnChange and myRef are just examples
 		return (
 			<MyInput
 				{...otherProps}
-				myValue={value}
+				myValue={value ?? ''}
 				myOnChange={onChange}
 				myRef={ref}
 			/>
