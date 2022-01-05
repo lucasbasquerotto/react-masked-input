@@ -176,7 +176,9 @@ You can see the default [MaskedInput component](src/components/masked-input.tsx)
 
 ### Custom mask hook
 
-Extend the hook to be used by a custom component. For this to work, the input component must allow to know and to modify the cursor position (in the example below, the read-write property `myPosition` was used as an example).
+Extend the hook to be used by a custom component (or several components, as long as the way to get and to change the cursor position is the same for those components).
+
+The only requirement for the creation of a custom hook is that the input component must have a way to retrieve and to modify the cursor position (in the example below, the read-write property `myPosition` was used as an example).
 
 ```ts
 import React from 'react';
@@ -214,6 +216,6 @@ export const useMyMask = ({
 };
 ```
 
-The hook [useRefMask](src/hooks/use-ref-mask.ts) wraps the generic hook and was created to be allow to use the component `ref` even if an external ref is received without boilerplate.
+The hook [useRefMask](src/hooks/use-ref-mask.ts) wraps the generic [useMask](src/hooks/use-mask.ts) hook and was created to allow the use of the component `ref` even if an external `ref` is received without having to add boilerplate to handle this case.
 
 You can see the [useWebMask hook](src/hooks/use-web-mask.ts) provided by this package as a reference.
