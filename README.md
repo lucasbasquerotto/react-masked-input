@@ -2,14 +2,14 @@
 
 [![npm downloads](https://img.shields.io/npm/dm/react-hook-mask.svg?style=for-the-badge)](https://www.npmjs.com/package/react-hook-mask)
 [![npm](https://img.shields.io/npm/dt/react-hook-mask.svg?style=for-the-badge)](https://www.npmjs.com/package/react-hook-mask)
-[![npm](https://img.shields.io/npm/l/react-hook-mask?style=for-the-badge)](https://github.com/lucasbasquerotto/react-hook-mask/blob/master/LICENSE)
+[![npm](https://img.shields.io/npm/l/react-hook-mask?style=for-the-badge)](https://github.com/lucasbasquerotto/react-masked-input/blob/master/LICENSE)
 
 </div>
 
 <p align="center">
   <a href="#quickstart">Quickstart</a> |
-  <a href="https://github.com/lucasbasquerotto/react-hook-mask/tree/master/example">Example</a> |
-  <a href="https://codesandbox.io/s/react-typescript-forked-2el90?file=/src/masked-phone-number.tsx">Demo</a> |
+  <a href="https://github.com/lucasbasquerotto/react-masked-input/tree/master/example">Example</a> |
+  <a href="https://codesandbox.io/s/react-typescript-forked-2el90?file=/src/masked-phone-number.tsx">Demo</a>
 </p>
 
 ### Features

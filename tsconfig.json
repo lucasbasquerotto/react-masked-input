@@ -4,10 +4,10 @@
   ],
   "exclude": [
     "node_modules",
-    "lib"
+    "dist"
   ],
   "compilerOptions": {
-    "outDir": "lib/esm",
+    "outDir": "dist/esm",
     "module": "esnext",
     "target": "es5",
     "lib": [
