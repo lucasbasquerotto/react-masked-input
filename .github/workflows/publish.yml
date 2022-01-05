@@ -16,10 +16,10 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
-      # - name: Publish to NPM
-      #   run: npm publish
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish to NPM
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Install examples dependencies
         working-directory: examples
         run: npm ci
