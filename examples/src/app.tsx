@@ -36,7 +36,7 @@ const CustomHookComponent = () => {
 export default function App() {
 	return (
 		<div className="App">
-			<h1>Examples</h1>
+			<h1>Examples 02</h1>
 
 			<hr />
 
