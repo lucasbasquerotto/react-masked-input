@@ -3,7 +3,7 @@ on:
   push:
     branches: [release]
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,8 +27,7 @@ jobs:
         working-directory: examples
         run: npm run build
       - name: Deploy examples to Github Pages
-        working-directory: examples
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
+          publish_dir: ./examples/build
