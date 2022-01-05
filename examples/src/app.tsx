@@ -35,40 +35,76 @@ const CustomHookComponent = () => {
 
 export default function App() {
 	return (
-		<div className="App">
-			<h1>Examples</h1>
+		<div className="app">
+			<h1 className="main-title">Examples</h1>
 
-			<hr />
+			<div className="info-section">
+				<p>
+					<code>npm install react-hook-mask</code>
+				</p>
+				<p>
+					Package:{' '}
+					<a href="https://www.npmjs.com/package/react-hook-mask">
+						https://www.npmjs.com/package/react-hook-mask
+					</a>
+				</p>
+				<p>
+					Repository:{' '}
+					<a href="https://github.com/lucasbasquerotto/react-masked-input">
+						https://github.com/lucasbasquerotto/react-masked-input
+					</a>
+				</p>
+			</div>
 
-			<h2>Quickstart</h2>
-			<Quickstart />
+			<div className="section">
+				<h2 className="title">Quickstart</h2>
 
-			<hr />
+				<div className="content">
+					<Quickstart />
+				</div>
+			</div>
 
-			<h2>Custom Rules</h2>
-			<CustomRules />
+			<div className="section">
+				<h2 className="title">Custom Rules</h2>
 
-			<hr />
+				<div className="content">
+					<CustomRules />
+				</div>
+			</div>
 
-			<h2>Dynamic Number Mask</h2>
-			<DynamicNumberMask />
+			<div className="section">
+				<h2 className="title">Dynamic Number Mask</h2>
 
-			<hr />
+				<div className="content">
+					<DynamicNumberMask />
+				</div>
+			</div>
 
-			<h2>Dynamic Mask</h2>
-			<DynamicMask />
+			<div className="section">
+				<h2 className="title">Dynamic Mask</h2>
 
-			<hr />
+				<div className="content">
+					<DynamicMask />
+				</div>
+			</div>
 
-			<h2>Custom DOM Component</h2>
-			<CustomDOMComponent maskGenerator={customDOMMaskGenerator} />
-			<div>Mask: {customDOMMask}</div>
+			<div className="section">
+				<h2 className="title">Custom DOM Component</h2>
 
-			<hr />
+				<div className="content">
+					<CustomDOMComponent maskGenerator={customDOMMaskGenerator} />
+					<div className="info">Mask: {customDOMMask}</div>
+				</div>
+			</div>
 
-			<h2>Custom Mask Hook</h2>
-			<CustomHookComponent />
-			<div>Mask: {customHookMask}</div>
+			<div className="section">
+				<h2 className="title">Custom Mask Hook</h2>
+
+				<div className="content">
+					<CustomHookComponent />
+					<div className="info">Mask: {customHookMask}</div>
+				</div>
+			</div>
 		</div>
 	);
 }

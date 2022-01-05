@@ -16,10 +16,10 @@ const DynamicNumberMask = () => {
 				value={value}
 				onChange={setValue}
 			/>
-			<div>Mask1: {mask1}</div>
-			<div>Mask2: {mask2}</div>
-			<div>Value (no mask):</div>
-			<div>{value}</div>
+			<div className="info">Mask1: {mask1}</div>
+			<div className="info">Mask2: {mask2}</div>
+			<div className="info">Value (no mask):</div>
+			{value ? <div className="info">{value}</div> : undefined}
 		</div>
 	);
 };

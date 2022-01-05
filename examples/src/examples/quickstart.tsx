@@ -14,9 +14,9 @@ const Quickstart = () => {
 				value={value}
 				onChange={setValue}
 			/>
-			<div>Mask: {mask}</div>
-			<div>Value (no mask):</div>
-			<div>{value}</div>
+			<div className="info">Mask: {mask}</div>
+			<div className="info">Value (no mask):</div>
+			{value ? <div className="info">{value}</div> : undefined}
 		</div>
 	);
 };

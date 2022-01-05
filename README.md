@@ -14,12 +14,12 @@
 
 ### Features
 
-- Support custom masks and mask rules to define which characters are allowed.
-- Can generate different masks based on the current value.
-- Preserve the cursor position when the value is changed, or when a new value (or part of it) is pasted, even when the mask changes.
-- Extensible, allowing the use of the [generic hook](src/hooks/use-mask.ts) by different components.
-- Default [hook for web (DOM) components](src/hooks/use-web-mask.ts), as well as an implementation of the [react-dom input component](src/components/masked-input.tsx) that uses the hook.
-- Function [createDefaultMaskGenerator](src/utils/mask-util.ts) to easily create a mask generator that generates a single mask (independent of the value).
+-   Support custom masks and mask rules to define which characters are allowed.
+-   Can generate different masks based on the current value.
+-   Preserve the cursor position when the value is changed, or when a new value (or part of it) is pasted, even when the mask changes.
+-   Extensible, allowing the use of the [generic hook](src/hooks/use-mask.ts) by different components.
+-   Default [hook for web (DOM) components](src/hooks/use-web-mask.ts), as well as an implementation of the [react-dom input component](src/components/masked-input.tsx) that uses the hook.
+-   Function [createDefaultMaskGenerator](src/utils/mask-util.ts) to easily create a mask generator that generates a single mask (independent of the value).
 
 ### Install
 
@@ -34,19 +34,19 @@ import { MaskedInput, createDefaultMaskGenerator } from 'react-hook-mask';
 const maskGenerator = createDefaultMaskGenerator('999 999 9999');
 
 const Quickstart = () => {
-	const [value, setValue] = React.useState('');
+    const [value, setValue] = React.useState('');
 
-	return (
-		<div>
-			<MaskedInput
-				maskGenerator={maskGenerator}
-				value={value}
-				onChange={setValue}
-			/>
-			<div>Value (no mask):</div>
-			<div>{value}</div>
-		</div>
-	);
+    return (
+        <div>
+            <MaskedInput
+                maskGenerator={maskGenerator}
+                value={value}
+                onChange={setValue}
+            />
+            <div>Value (no mask):</div>
+            <div>{value}</div>
+        </div>
+    );
 };
 
 export default Quickstart;
@@ -63,31 +63,31 @@ import React from 'react';
 import { MaskedInput } from 'react-hook-mask';
 
 const MY_RULES = new Map([
-	['C', /[A-Za-z]/],
-	['N', /\d/],
+    ['C', /[A-Za-z]/],
+    ['N', /\d/],
 ]);
 
 const createMaskGenerator = (mask) => ({
-	rules: MY_RULES,
-	generateMask: () => mask,
+    rules: MY_RULES,
+    generateMask: () => mask,
 });
 
 const maskGenerator = createMaskGenerator('CCC-NNNN');
 
 const CustomRules = () => {
-	const [value, setValue] = React.useState('');
+    const [value, setValue] = React.useState('');
 
-	return (
-		<div>
-			<MaskedInput
-				maskGenerator={maskGenerator}
-				value={value}
-				onChange={setValue}
-			/>
-			<div>Value (no mask):</div>
-			<div>{value}</div>
-		</div>
-	);
+    return (
+        <div>
+            <MaskedInput
+                maskGenerator={maskGenerator}
+                value={value}
+                onChange={setValue}
+            />
+            <div>Value (no mask):</div>
+            <div>{value}</div>
+        </div>
+    );
 };
 
 export default CustomRules;
@@ -102,28 +102,28 @@ import React from 'react';
 import { MaskedInput, DEFAULT_MASK_RULES } from 'react-hook-mask';
 
 const maskGenerator = {
-	rules: DEFAULT_MASK_RULES,
-	generateMask: (value) =>
-		(value?.replaceAll('-', '').length ?? 0) <= 10
-			? 'AAA-AAA-AAAA'
-			: 'AAA-AAA-AAA-AAAA',
-	transform: (v) => v?.toUpperCase(),
+    rules: DEFAULT_MASK_RULES,
+    generateMask: (value) =>
+        (value?.replaceAll('-', '').length ?? 0) <= 10
+            ? 'AAA-AAA-AAAA'
+            : 'AAA-AAA-AAA-AAAA',
+    transform: (v) => v?.toUpperCase(),
 };
 
 const DynamicMask = () => {
-	const [value, setValue] = React.useState('');
+    const [value, setValue] = React.useState('');
 
-	return (
-		<div>
-			<MaskedInput
-				maskGenerator={maskGenerator}
-				value={value}
-				onChange={setValue}
-			/>
-			<div>Value (no mask):</div>
-			<div>{value}</div>
-		</div>
-	);
+    return (
+        <div>
+            <MaskedInput
+                maskGenerator={maskGenerator}
+                value={value}
+                onChange={setValue}
+            />
+            <div>Value (no mask):</div>
+            <div>{value}</div>
+        </div>
+    );
 };
 
 export default DynamicMask;
@@ -139,34 +139,34 @@ import { useWebMask } from 'react-hook-mask';
 import MyInput from './my-input';
 
 const CustomDOMComponent = React.forwardRef(
-	(
-		{
-			maskGenerator,
-			value: outerValue,
-			onChange: onChangeOuter,
-			keepMask,
-			...otherProps
-		},
-		outerRef,
-	) => {
-		const { value, onChange, ref } = useWebMask({
-			maskGenerator,
-			value: outerValue,
-			onChange: onChangeOuter,
-			keepMask,
-			ref: outerRef,
-		});
+    (
+        {
+            maskGenerator,
+            value: outerValue,
+            onChange: onChangeOuter,
+            keepMask,
+            ...otherProps
+        },
+        outerRef,
+    ) => {
+        const { value, onChange, ref } = useWebMask({
+            maskGenerator,
+            value: outerValue,
+            onChange: onChangeOuter,
+            keepMask,
+            ref: outerRef,
+        });
 
-		// The properties myValue, myOnChange and myRef are just examples
-		return (
-			<MyInput
-				{...otherProps}
-				myValue={value ?? ''}
-				myOnChange={onChange}
-				myRef={ref}
-			/>
-		);
-	},
+        // The properties myValue, myOnChange and myRef are just examples
+        return (
+            <MyInput
+                {...otherProps}
+                myValue={value ?? ''}
+                myOnChange={onChange}
+                myRef={ref}
+            />
+        );
+    },
 );
 
 export default CustomDOMComponent;
@@ -183,34 +183,34 @@ import React from 'react';
 import { useRefMask } from 'react-hook-mask';
 
 export const useMyMask = ({
-	maskGenerator,
-	value,
-	onChange,
-	keepMask,
-	ref: outerRef,
+    maskGenerator,
+    value,
+    onChange,
+    keepMask,
+    ref: outerRef,
 }) => {
-	const getCursorPosition = React.useCallback((el) => {
-		const cursorPosition = el?.myPosition ?? 0;
-		return cursorPosition;
-	}, []);
+    const getCursorPosition = React.useCallback((el) => {
+        const cursorPosition = el?.myPosition ?? 0;
+        return cursorPosition;
+    }, []);
 
-	const setCursorPosition = React.useCallback((cursorPosition, el) => {
-		if (el) {
-			el.myPosition = cursorPosition;
-		}
-	}, []);
+    const setCursorPosition = React.useCallback((cursorPosition, el) => {
+        if (el) {
+            el.myPosition = cursorPosition;
+        }
+    }, []);
 
-	const { displayValue, setDisplayValue, ref } = useRefMask({
-		value,
-		maskGenerator,
-		getCursorPosition,
-		setCursorPosition,
-		onChange,
-		keepMask,
-		ref: outerRef,
-	});
+    const { displayValue, setDisplayValue, ref } = useRefMask({
+        value,
+        maskGenerator,
+        getCursorPosition,
+        setCursorPosition,
+        onChange,
+        keepMask,
+        ref: outerRef,
+    });
 
-	return { value: displayValue, onChange: setDisplayValue, ref };
+    return { value: displayValue, onChange: setDisplayValue, ref };
 };
 ```
 
