@@ -67,7 +67,6 @@ const mask = (
 	);
 
 	if (maskedValue !== shouldBeTheSame) {
-		console.log('typeof console', typeof console);
 		if (typeof console !== undefined) {
 			console?.error(
 				'mask applied to value should not change when applied again',
@@ -256,15 +255,6 @@ const getExpectedCursorPos = (args: {
 				  )
 				: Math.max(oldStaticChars - newStaticChars, 0);
 
-		console.log(
-			'diffStaticChars',
-			diffStaticChars,
-			' - ',
-			newStaticChars,
-			oldStaticChars,
-			staticCharsOffset,
-		);
-
 		return diffStaticChars;
 	};
 
@@ -276,12 +266,6 @@ const getExpectedCursorPos = (args: {
 		0,
 	);
 
-	// Fix the difference of static chars when the mask changes, based on the calculated position
-	const diffStaticChars = fnDiffStaticChars(lastCursorPositionAux);
-	const diffStaticCharsToApply = diffStaticChars - diffStaticCharsTmp;
-
-	const lastCursorPosition = lastCursorPositionAux + diffStaticCharsToApply;
-
 	// The mask static offset corresponds to the number of static chars present in the new
 	// value not present in it before applying the mask before the starting position (the
 	// cursor should go forward according to this offset after applying the mask)
@@ -290,95 +274,58 @@ const getExpectedCursorPos = (args: {
 		valueBeforeMaskMasked === displayValue &&
 		len03 < len02 &&
 		len03 <= newMaskStr.length
-			? (valueBeforeMask ?? '')
-					.substring(0, Math.min(lastCursorPosition, len03))
-					.split('')
-					.reduce(
-						({ offset, maskOffset }, char) => {
-							const offsetToAdd =
-								newMask && maskOffset < (newMaskStr ?? '').length
-									? newMaskStr
-											.substring(maskOffset)
-											.split('')
-											.findIndex((maskChar) => !!newMask.rules.get(maskChar))
-									: 0;
+			? Math.max(
+					0,
+					(valueBeforeMask ?? '')
+						.substring(
+							0,
+							Math.min(Math.min(cursorPosition, lastCursorPositionAux), len03),
+						)
+						.split('')
+						.reduce(
+							({ offset, maskOffset }, char) => {
+								const offsetToAdd =
+									newMask && maskOffset < (newMaskStr ?? '').length
+										? newMaskStr
+												.substring(maskOffset)
+												.split('')
+												.findIndex((maskChar) => {
+													const userProvided = !!newMask.rules.get(maskChar);
+													return (
+														userProvided || (!userProvided && maskChar === char)
+													);
+												})
+										: 0;
 
-							const maskIdx = maskOffset + offsetToAdd;
+								const maskIdx =
+									maskOffset + (offsetToAdd >= 0 ? offsetToAdd : 0);
 
-							const maskChar = newMaskStr?.[maskIdx];
-							const rule =
-								newMask && maskIdx < (newMaskStr ?? '').length
-									? newMask.rules.get(maskChar)
-									: null;
+								const maskChar = newMaskStr?.[maskIdx];
+								const rule =
+									newMask && maskIdx < (newMaskStr ?? '').length
+										? newMask.rules.get(maskChar)
+										: null;
 
-							const userProvided = rule?.test(char);
-							const ignoreChar = !userProvided && char !== maskChar;
-							const maskOffsetToAdd = ignoreChar ? 0 : 1;
-							const valueOffsetToAdd = ignoreChar ? -1 : 0;
+								const userProvided = rule?.test(char);
+								const ignoreChar = !userProvided && char !== maskChar;
+								const maskOffsetToAdd = ignoreChar ? 0 : 1;
+								const valueOffsetToAdd = ignoreChar ? -1 : 0;
 
-							console.log(
-								'userProvided',
-								userProvided,
-								offsetToAdd,
-								maskOffsetToAdd,
-								char,
-								maskIdx,
-								' - ',
-								maskOffsetToAdd,
-								valueOffsetToAdd,
-							);
-
-							return {
-								offset:
-									offset + (userProvided ? offsetToAdd : 0) + valueOffsetToAdd,
-								maskOffset:
-									maskOffset +
-									(userProvided ? offsetToAdd : 0) +
-									maskOffsetToAdd,
-							};
-						},
-						{ offset: 0, maskOffset: 0 },
-					).offset
+								return {
+									offset:
+										offset +
+										(userProvided ? offsetToAdd : 0) +
+										valueOffsetToAdd,
+									maskOffset:
+										maskOffset +
+										(userProvided ? offsetToAdd : 0) +
+										maskOffsetToAdd,
+								};
+							},
+							{ offset: 0, maskOffset: 0 },
+						).offset,
+			  )
 			: 0;
-
-	console.log(
-		'lastCursorPosition',
-		lastCursorPosition,
-		lastCursorPositionTmp,
-		' - ',
-		diffStaticCharsToApply,
-		diffStaticChars,
-		diffStaticCharsTmp,
-		' - ',
-		maskStaticOffset,
-	);
-
-	// The offset of dynamic chars is used to correct the cursor when the number of user
-	// provided chars before the last cursor position changed (when the mask changes)
-	const dynamicCharsOffset = noChange
-		? 0
-		: createString(Math.min(lastCursorPosition, cursorPosition))
-				.split('')
-				.reduce((acc, _, idx) => {
-					if (oldMask && newMask) {
-						const maskIdx = idx;
-						const oldChar = oldMaskStr?.[maskIdx];
-						const newChar = newMaskStr?.[maskIdx];
-
-						if (oldChar != null && newChar != null) {
-							const oldCharDynamic = oldMask.rules.has(oldChar);
-							const newCharDynamic = newMask.rules.has(newChar);
-
-							if (newCharDynamic && !oldCharDynamic) {
-								return acc + 1;
-							} else if (oldCharDynamic && !newCharDynamic) {
-								return acc - 1;
-							}
-						}
-					}
-
-					return acc;
-				}, 0);
 
 	// For the mask offset, if the string before the mask was applied
 	// was bigger than mask, consider only user provided chars
@@ -387,13 +334,13 @@ const getExpectedCursorPos = (args: {
 			? maskStaticOffset
 			: (valueBeforeMask ?? '')
 					.substring(
-						Math.min(lastCursorPosition, len03),
-						Math.min(lastCursorPosition + maskRemovedOffsetTmp, len03),
+						Math.min(lastCursorPositionAux, len03),
+						Math.min(lastCursorPositionAux + maskRemovedOffsetTmp, len03),
 					)
 					.split('')
 					.reduce(
 						({ offset, maskOffset }, char) => {
-							const maskIdxTmp = lastCursorPosition + maskOffset;
+							const maskIdxTmp = lastCursorPositionAux + maskOffset;
 
 							const maskOffsetToAddTmp =
 								newMask && maskIdxTmp < (newMaskStr ?? '').length
@@ -425,17 +372,60 @@ const getExpectedCursorPos = (args: {
 						{ offset: 0, maskOffset: 0 },
 					).offset;
 
+	// Add to the last cursor position the number of static chars that had been removed from it
+	// due to the change in the mask, but that were discarded
+	const diffMaskRemoved =
+		maskRemovedOffsetTmp > 0
+			? Math.max(
+					Math.min(
+						maskRemovedOffsetTmp + maskRemovedOffset,
+						(oldMaskStr?.length ?? 0) - (newMaskStr?.length ?? 0),
+					),
+					0,
+			  )
+			: 0;
+
+	// Fix the difference of static chars when the mask changes, based on the calculated position
+	const diffStaticChars = fnDiffStaticChars(lastCursorPositionAux);
+	const diffStaticCharsToApply = diffStaticChars - diffStaticCharsTmp;
+
+	const lastCursorPosition =
+		lastCursorPositionAux + diffStaticCharsToApply + diffMaskRemoved;
+
+	// The offset of dynamic chars is used to correct the cursor when the number of user
+	// provided chars before the last cursor position changed (when the mask changes)
+	const dynamicCharsOffset = noChange
+		? 0
+		: createString(Math.min(lastCursorPosition, cursorPosition))
+				.split('')
+				.reduce((acc, _, idx) => {
+					if (oldMask && newMask) {
+						const maskIdx = idx;
+						const oldChar = oldMaskStr?.[maskIdx];
+						const newChar = newMaskStr?.[maskIdx];
+
+						if (oldChar != null && newChar != null) {
+							const oldCharDynamic = oldMask.rules.has(oldChar);
+							const newCharDynamic = newMask.rules.has(newChar);
+
+							if (newCharDynamic && !oldCharDynamic) {
+								return acc + 1;
+							} else if (oldCharDynamic && !newCharDynamic) {
+								return acc - 1;
+							}
+						}
+					}
+
+					return acc;
+				}, 0);
+
 	// To calculate the remaining, it's considered the number of dynamic chars added (minus the
 	// added chars before the last cursor position due to a change in the mask) plus the new static
 	// chars before the last position (but not considering the fix in the difference based on the
 	// mask change after the previous initial position was defined, because static chars after
 	// the initial position are already skipped when calculating the new position). The number of
 	// chars removed because the mask already reached the limit of chars is also considered.
-	const remaining =
-		diffDynamicChars -
-		dynamicCharsOffset +
-		diffStaticCharsTmp +
-		maskRemovedOffset;
+	const remaining = diffDynamicChars - dynamicCharsOffset + maskRemovedOffset;
 
 	// Go with the cursor to the front of the text until before the first user-provided char
 	// (or to the end of the new display value) when there are no changes in the value.
@@ -511,8 +501,41 @@ const getExpectedCursorPos = (args: {
 	// It goes until right before a first user-provided char (or to
 	// the beginning of the string) when remaining reaches 0.
 	const goToTheBack = () => {
-		console.log('goToTheBack', remaining, -lastCursorPosition);
-		return Math.max(remaining, -lastCursorPosition);
+		return createString(lastCursorPosition)
+			.split('')
+			.reduce(
+				({ offset, compensation, remaining }, _, idx) => {
+					if (remaining < 0) {
+						offset--;
+
+						const maskIdx = lastCursorPosition - 1 - idx;
+
+						const newUserProvided =
+							newMask && maskIdx < (newMaskStr ?? '').length
+								? newMask.rules.has(newMaskStr?.[maskIdx])
+								: true;
+
+						const oldUserProvided =
+							oldMask && maskIdx < (oldMaskStr ?? '').length
+								? oldMask.rules.has(oldMaskStr?.[maskIdx])
+								: true;
+
+						if (newUserProvided) {
+							if (oldUserProvided || compensation === 0) {
+								remaining++;
+							} else {
+								compensation--;
+							}
+						} else if (oldUserProvided) {
+							compensation++;
+							remaining++;
+						}
+					}
+
+					return { offset, compensation, remaining };
+				},
+				{ offset: 0, compensation: 0, remaining },
+			).offset;
 	};
 
 	// Calculate the offset based on the conditions
@@ -532,29 +555,6 @@ const getExpectedCursorPos = (args: {
 	const position = Math.min(
 		Math.max(lastCursorPosition + offset, 0),
 		(displayValue ?? '')?.length,
-	);
-
-	console.log(
-		'info',
-		lastCursorPosition,
-		lastCursorPositionTmp,
-		cursorPosition,
-		position,
-		' - ',
-		oldDisplayValue,
-		valueBeforeMask,
-		displayValue,
-		' - ',
-		newDynamicChars,
-		oldDynamicChars,
-		' - ',
-		maskRemovedOffset,
-		noChange,
-		' -> ',
-		remaining,
-		offset,
-		' - ',
-		lastWentBack,
 	);
 
 	// Examples (cursor is |):
@@ -578,13 +578,13 @@ const getExpectedCursorPos = (args: {
 	// Before the change (oldDisplayValue): (|12) 3456-7
 	// Delete char after (valueBeforeMask): (|2) 3456-7
 	// Mask applied (displayValue): (|23) 4567
-	// Offset NOT applied: (|23) 4567
+	// Offset applied: (|23) 4567
 	//
 	// Example 03:
 	// Before the change (oldDisplayValue): (1|2) 3456-7
 	// Delete char before (valueBeforeMask): (|2) 3456-7
 	// Mask applied (displayValue): (|23) 4567
-	// Offset NOT applied: (|23) 4567
+	// Offset applied: (|23) 4567
 	//
 	// -> Details for 02 and 03:
 	// - lastCursorPosition=2 (oldDisplayValue)
@@ -617,13 +617,13 @@ const getExpectedCursorPos = (args: {
 	// - position=5 (for 04)
 	// - position=3 (for 05)
 	// Important: Observe that the values of valueBeforeMask and displayValue of
-	// this example and the previous are the same, as well as the value of
-	// cursorPosition (which is 4, that we get AFTER the value changed).
+	// both examples are the same, as well as the value of cursorPosition
+	// (which is 4, that we get AFTER the value changed).
 	// Also note that lastCursorPosition in the example '05' should be 5, but we don't
 	// actually know that (because no user-provided char was removed), which makes
 	// examples 04 and 05 be seen as the same from the algorithm point-of-view, in such a
-	// way that the flag 'lastWentBack' is used to know if the last cursor change without
-	// changing user provided chars went forward and backward, alternating the flag
+	// way that the flag 'lastWentBack' is used to know if the last cursor change (without
+	// changing user provided chars) went forward and backward, alternating the flag
 	// value so that deleting chars after and before the cursor will work at most in
 	// the second try (without "blocking" the user from deleting chars).
 	//
@@ -687,16 +687,29 @@ const getExpectedCursorPos = (args: {
 	// Important: lastCursorPositionTmp was calculated as cursorPosition - diffDynamicChars,
 	// and lastCursorPosition was calculated from it (ended with the same value)
 	//
+	// Example 10:
+	// Before the change (oldDisplayValue): (|23) 4567
+	// Number 1 added (valueBeforeMask): (1|23) 4567
+	// Mask applied (displayValue): (1|2) 3456-7
+	// Offset applied: (1|2) 3456-7
+	//
+	// -> Details for 10:
+	// - lastCursorPosition=1 (oldDisplayValue)
+	// - cursorPosition=2 (displayValue)
+	// - remaining=1 (1 new user provided char added)
+	// - offset=1 (remaining)
+	// - position=2 (lastCursorPosition + offset)
+	//
 	// Mask: (99) 9999-9999 -> (99) 99999-9999
 	// (The mask is dynamic, based on the number of user provided chars)
 	//
-	// Example 10:
+	// Example 11:
 	// Before the change (oldDisplayValue): (12) 3456-|7812
 	// Number 9 added (valueBeforeMask): (12) 3456-9|7812
 	// Mask applied (displayValue): (12) 34569-|7812
 	// Offset applied: (12) 34569|-7812
 	//
-	// -> Details for 10:
+	// -> Details for 11:
 	// - lastCursorPosition=10 (oldDisplayValue)
 	// - cursorPosition=11 (displayValue)
 	// - diffDynamicChars=1 (newDynamicChars=11 - oldDynamicChars=10)
@@ -711,36 +724,28 @@ const getExpectedCursorPos = (args: {
 	// (diffDynamicChars - dynamicCharsOffset = 0). It's also important
 	// to note that position=11 is not strictly wrong ((12) 34569-|7812).
 	//
-	// Example 11:
+	// Example 12:
 	// Before the change (oldDisplayValue): (12) 34567|-8912
 	// Delete before (valueBeforeMask): (12) 3456|-8912
 	// Mask applied (displayValue): (12) 3456|-8912
 	// Offset applied: (12) 3456-|8912
 	//
-	// Example 12:
+	// Example 13:
 	// Before the change (oldDisplayValue): (12) 3456|7-8912
 	// Delete after (valueBeforeMask): (12) 3456|-8912
 	// Mask applied (displayValue): (12) 3456|-8912
 	// Offset applied: (12) 3456-|8912
 	//
-	// -> Details for 11 and 12:
+	// -> Details for 12 and 13:
 	// - lastCursorPosition=10 (oldDisplayValue)
 	// - cursorPosition=9 (displayValue)
 	// - diffDynamicChars=-1 (newDynamicChars=10 - oldDynamicChars=11)
-	// - diffStaticCharsTmp=1 (newStaticChars=4 - oldStaticChars=3)
-	// - remaining=0 (diffDynamicChars=-1 - diffStaticCharsTmp=1) +
-	// - offset=0 (remaining)
-	// - position=10 (lastCursorPosition + offset)
-	// Important: The examples 11 and 12 are the same from the point of
-	// view of the algorithm (just like examples 02 and 03). Also, the number
-	// of user-provided chars decreased by 1 (decreasing remaining by 1),
-	// but the number of static chars before the initial cursor position
-	// before applying the correction due to the static mask char added ('-')
-	// when the new mask was applied increased by 1 (increasing remaining
-	// by 1, making it 0), because with the old mask the '-' was right after
-	// the cursor (not counted), but with the new mask the '-' was right
-	// before the cursor (counted). It's also important to note that
-	// position=9 is not strictly wrong (that is, (12) 3456|-8912).
+	// - offset=-1 (offset = remaining = diffDynamicChars)
+	// - position=9 (lastCursorPosition + offset)
+	// Important: The examples 12 and 13 are the same from the point of
+	// view of the algorithm (just like examples 02 and 03).
+	// It's also important to note that position=10 is not strictly
+	// wrong (that is, (12) 3456-|8912).
 
 	const wentBack = noChange ? !lastWentBack : !!lastWentBack;
 
