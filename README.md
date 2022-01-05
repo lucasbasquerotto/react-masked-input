@@ -2,7 +2,7 @@
 
 [![npm downloads](https://img.shields.io/npm/dm/react-hook-mask.svg?style=for-the-badge)](https://www.npmjs.com/package/react-hook-mask)
 [![npm](https://img.shields.io/npm/dt/react-hook-mask.svg?style=for-the-badge)](https://www.npmjs.com/package/react-hook-mask)
-[![npm](https://img.shields.io/npm/l/react-hook-mask?style=for-the-badge)](https://github.com/lucasbasquerotto/react-masked-input/blob/master/LICENSE)
+[![npm](https://img.shields.io/npm/l/react-hook-mask?style=for-the-badge)](https://github.com/lucasbasquerotto/react-masked-input/blob/master/LICENCE)
 
 </div>
 
