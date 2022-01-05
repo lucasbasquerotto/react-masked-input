@@ -1,6 +1,7 @@
 {
   "name": "react-hook-mask-examples",
   "version": "1.0.0",
+  "homepage": ".",
   "description": "React and TypeScript example starter project",
   "keywords": [
     "typescript",

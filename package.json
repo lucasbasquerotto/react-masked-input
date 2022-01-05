@@ -1,11 +1,12 @@
 {
   "name": "react-hook-mask",
+  "version": "1.1.1",
+  "description": "React masked input component and hooks",
   "repository": {
     "type": "git",
     "url": "https://github.com/lucasbasquerotto/react-masked-input.git"
   },
-  "version": "1.1.1",
-  "description": "React masked input component and hooks",
+  "homepage": "https://lucasbasquerotto.github.io/react-masked-input",
   "keywords": [
     "typescript",
     "react",
