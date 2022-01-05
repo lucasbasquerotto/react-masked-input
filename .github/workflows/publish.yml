@@ -20,3 +20,15 @@ jobs:
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Install examples dependencies
+        working-directory: examples
+        run: npm ci
+      - name: Build examples
+        working-directory: examples
+        run: npm run build
+      - name: Deploy examples to Github Pages
+        working-directory: examples
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
