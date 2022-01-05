@@ -8,18 +8,18 @@
 
 <p align="center">
   <a href="#quickstart">Quickstart</a> |
-  <a href="https://github.com/lucasbasquerotto/react-masked-input/tree/master/example">Example</a> |
-  <a href="https://codesandbox.io/s/react-typescript-forked-2el90?file=/src/masked-phone-number.tsx">Demo</a>
+  <a href="https://github.com/lucasbasquerotto/react-masked-input/tree/master/examples/src/examples">Examples</a> |
+  <a href="https://lucasbasquerotto.github.io/react-masked-input">Demo</a>
 </p>
 
 ### Features
 
-- Support custom masks and mask rules to define which characters are allowed
-- Can generate different masks based on the current value
-- Preserve the cursor position when the value is changed, or when a new value (or part of it) is pasted (even when the mask changes)
-- Extensible, allowing the use of the [generic hook](src/hooks/use-mask.ts) by different components
-- Default [hook for web components](src/hooks/use-web-mask.ts), as well as a [react-dom input component](src/components/masked-input.tsx) that uses the hook
-- Function to easily create a mask generator that generates a single mask (independent of the value)
+- Support custom masks and mask rules to define which characters are allowed.
+- Can generate different masks based on the current value.
+- Preserve the cursor position when the value is changed, or when a new value (or part of it) is pasted, even when the mask changes.
+- Extensible, allowing the use of the [generic hook](src/hooks/use-mask.ts) by different components.
+- Default [hook for web (DOM) components](src/hooks/use-web-mask.ts), as well as an implementation of the [react-dom input component](src/components/masked-input.tsx) that uses the hook.
+- Function [createDefaultMaskGenerator](src/utils/mask-util.ts) to easily create a mask generator that generates a single mask (independent of the value).
 
 ### Install
 
