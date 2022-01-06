@@ -1,5 +1,5 @@
 import React from 'react';
-import { MaskGenerator } from '../utils/mask-util';
+import type { MaskGenerator } from '../utils/mask-util';
 import { useMask } from './use-mask';
 
 const useCombinedRefs = <T>(
@@ -53,7 +53,7 @@ export const useRefMask = <T>({
 			const el = combinedRefs?.current;
 			setCursorPositionOuter(cursorPosition, el ?? undefined);
 		},
-		[combinedRefs],
+		[combinedRefs, setCursorPositionOuter],
 	);
 
 	const { displayValue, setDisplayValue } = useMask({

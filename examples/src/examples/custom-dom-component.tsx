@@ -1,5 +1,6 @@
 import React from 'react';
-import { useWebMask, MaskGenerator } from 'react-hook-mask';
+import type { MaskGenerator } from 'react-hook-mask';
+import { useWebMask } from 'react-hook-mask';
 
 export interface MyInputProps {
 	className?: string;

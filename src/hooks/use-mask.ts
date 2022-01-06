@@ -1,5 +1,5 @@
 import React from 'react';
-import { MaskGenerator } from '../utils/mask-util';
+import type { MaskGenerator } from '../utils/mask-util';
 
 const createString = (size: number): string => {
 	let s = '';
@@ -56,6 +56,7 @@ const maskMain = (
 
 	return { maskedValue: newValue, mask };
 };
+
 const mask = (
 	value: string,
 	maskGenerator: MaskGenerator,
@@ -248,7 +249,7 @@ const getExpectedCursorPos = (args: {
 						}, 0);
 
 		const diffStaticChars =
-			diffDynamicChars > 0
+			diffDynamicChars >= 0
 				? Math.max(
 						newStaticChars - oldStaticChars + Math.max(staticCharsOffset, 0),
 						-diffDynamicChars,
@@ -314,11 +315,11 @@ const getExpectedCursorPos = (args: {
 								return {
 									offset:
 										offset +
-										(userProvided ? offsetToAdd : 0) +
+										(offsetToAdd > 0 && !ignoreChar ? offsetToAdd : 0) +
 										valueOffsetToAdd,
 									maskOffset:
 										maskOffset +
-										(userProvided ? offsetToAdd : 0) +
+										(offsetToAdd > 0 && !ignoreChar ? offsetToAdd : 0) +
 										maskOffsetToAdd,
 								};
 							},
@@ -769,6 +770,7 @@ export const useMask = ({
 	setCursorPosition,
 	keepMask,
 }: UseMaskProps) => {
+	const [lastOuterValue, setLastOuterValue] = React.useState(outerValue);
 	const [value, setValue] = React.useState(outerValue);
 	const [lastValue, setLastValue] = React.useState(value);
 	const [displayValue, setDisplayValue] = React.useState(value);
@@ -876,8 +878,14 @@ export const useMask = ({
 	);
 
 	React.useEffect(() => {
-		updateDisplayValue(outerValue ?? '');
-	}, [outerValue, updateDisplayValue]);
+		if (outerValue !== lastOuterValue) {
+			setLastOuterValue(outerValue);
+
+			if (outerValue !== value) {
+				updateDisplayValue(outerValue ?? '');
+			}
+		}
+	}, [outerValue, lastOuterValue, value, updateDisplayValue]);
 
 	React.useEffect(() => {
 		if (value !== lastValue) {

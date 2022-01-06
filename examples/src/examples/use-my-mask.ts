@@ -1,5 +1,6 @@
 import React from 'react';
-import { MaskGenerator, useRefMask } from 'react-hook-mask';
+import type { MaskGenerator } from 'react-hook-mask';
+import { useRefMask } from 'react-hook-mask';
 
 export interface UseMyMaskProps {
 	maskGenerator?: MaskGenerator;

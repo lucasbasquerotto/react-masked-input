@@ -1,6 +1,6 @@
 import React from 'react';
 import { useWebMask } from '../hooks/use-web-mask';
-import { MaskGenerator } from '../utils/mask-util';
+import type { MaskGenerator } from '../utils/mask-util';
 
 export const MaskedInput = React.forwardRef(
 	(
@@ -15,10 +15,11 @@ export const MaskedInput = React.forwardRef(
 				React.InputHTMLAttributes<HTMLInputElement>,
 				HTMLInputElement
 			>,
-			'onChange'
+			'value' | 'onChange'
 		> & {
 			maskGenerator?: MaskGenerator;
 			keepMask?: boolean;
+			value: string;
 			onChange?: (value: string) => void;
 		},
 		ref: React.ForwardedRef<HTMLInputElement> | undefined,
