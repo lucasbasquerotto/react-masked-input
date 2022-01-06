@@ -729,13 +729,13 @@ const getExpectedCursorPos = (args: {
 	// Before the change (oldDisplayValue): (12) 34567|-8912
 	// Delete before (valueBeforeMask): (12) 3456|-8912
 	// Mask applied (displayValue): (12) 3456|-8912
-	// Offset applied: (12) 3456-|8912
+	// Offset applied: (12) 3456|-8912
 	//
 	// Example 13:
 	// Before the change (oldDisplayValue): (12) 3456|7-8912
 	// Delete after (valueBeforeMask): (12) 3456|-8912
 	// Mask applied (displayValue): (12) 3456|-8912
-	// Offset applied: (12) 3456-|8912
+	// Offset applied: (12) 3456|-8912
 	//
 	// -> Details for 12 and 13:
 	// - lastCursorPosition=10 (oldDisplayValue)
