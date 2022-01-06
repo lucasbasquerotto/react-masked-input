@@ -1,10 +1,14 @@
 import React from 'react';
-import { MaskedInput } from 'react-hook-mask';
+import { MaskedInput, DEFAULT_MASK_RULES } from 'react-hook-mask';
 
-const mask = '+63(9XX) XXX-XX-XX';
+const mask1 = 'AAA-AAA-AAAA';
+const mask2 = 'AAA-AAAA-AAA-AAAA';
+
 const maskGenerator = {
-	rules: new Map([['X', /\d/]]),
-	generateMask: () => mask,
+	rules: DEFAULT_MASK_RULES,
+	generateMask: (value: string) =>
+		(value?.replaceAll('-', '').length ?? 0) <= 10 ? mask1 : mask2,
+	transform: (v: string) => v?.toUpperCase(),
 };
 
 const DynamicMask = () => {
@@ -17,7 +21,8 @@ const DynamicMask = () => {
 				value={value}
 				onChange={setValue}
 			/>
-			<div className="info">Mask: {mask}</div>
+			<div className="info">Mask1: {mask1}</div>
+			<div className="info">Mask2: {mask2}</div>
 			<div className="info">Value (no mask):</div>
 			{value ? <div className="info">{value}</div> : undefined}
 		</div>
