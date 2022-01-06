@@ -1,3 +1,5 @@
+# React Masked Input and Hooks
+
 <div align="center">
 
 [![npm downloads](https://img.shields.io/npm/dm/react-hook-mask.svg?style=for-the-badge)](https://www.npmjs.com/package/react-hook-mask)
