@@ -58,7 +58,7 @@ You can define a boolean property `keepMask` with the value `true` to preserve t
 
 ### Define custom rules
 
-Define a map custom rules for characters in the mask that must satisfy a regex provided. Characters in the mask not present in the rules are seen as static mask characters (as opposed to user provided characters), and will be included automatically in the display value.
+Define a map with custom rules for characters in the mask that must satisfy a regex provided. Characters in the mask not present in the rules are seen as static mask characters (as opposed to user provided characters), and will be included automatically in the display value.
 
 ```tsx
 import React from 'react';
