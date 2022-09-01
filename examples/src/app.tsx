@@ -22,6 +22,7 @@ const customHookMaskGenerator = {
 const CustomHookComponent = () => {
 	const { value, onChange, ref } = useMyMask({
 		maskGenerator: customHookMaskGenerator,
+		value: '12345678901',
 	});
 
 	return (

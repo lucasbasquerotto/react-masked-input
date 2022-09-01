@@ -7046,7 +7046,7 @@
 
 "react-hook-mask@file:..":
   "resolved" "file:.."
-  "version" "1.1.6"
+  "version" "1.1.8"
 
 "react-is@^16.13.1":
   "integrity" "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="

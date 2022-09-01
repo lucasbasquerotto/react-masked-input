@@ -770,6 +770,7 @@ export const useMask = ({
 	setCursorPosition,
 	keepMask,
 }: UseMaskProps) => {
+	const [first, setFirst] = React.useState(true);
 	const [lastOuterValue, setLastOuterValue] = React.useState(outerValue);
 	const [value, setValue] = React.useState(outerValue);
 	const [lastValue, setLastValue] = React.useState(value);
@@ -878,14 +879,15 @@ export const useMask = ({
 	);
 
 	React.useEffect(() => {
-		if (outerValue !== lastOuterValue) {
+		if (first || outerValue !== lastOuterValue) {
+			setFirst(false);
 			setLastOuterValue(outerValue);
 
-			if (outerValue !== value) {
+			if (first || outerValue !== value) {
 				updateDisplayValue(outerValue ?? '');
 			}
 		}
-	}, [outerValue, lastOuterValue, value, updateDisplayValue]);
+	}, [first, outerValue, lastOuterValue, value, updateDisplayValue]);
 
 	React.useEffect(() => {
 		if (value !== lastValue) {
