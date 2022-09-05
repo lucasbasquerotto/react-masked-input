@@ -770,7 +770,6 @@ export const useMask = ({
 	setCursorPosition,
 	keepMask,
 }: UseMaskProps) => {
-	const [first, setFirst] = React.useState(true);
 	const [lastOuterValue, setLastOuterValue] = React.useState(outerValue);
 	const [value, setValue] = React.useState(outerValue);
 	const [lastValue, setLastValue] = React.useState(value);
@@ -787,6 +786,9 @@ export const useMask = ({
 
 	const [lastMask, setLastMask] = React.useState(maskGenerator);
 	const [lastCursorMask, setLastCursorMask] = React.useState(maskGenerator);
+	const [lastMaskValue, setLastMaskValue] = React.useState<string | undefined>(
+		undefined,
+	);
 
 	const updateDisplayValue = React.useCallback(
 		(value: string, updateCursor?: boolean) => {
@@ -879,15 +881,28 @@ export const useMask = ({
 	);
 
 	React.useEffect(() => {
-		if (first || outerValue !== lastOuterValue) {
-			setFirst(false);
+		const maskValue =
+			(maskGenerator?.generateMask &&
+				maskGenerator?.generateMask(value ?? '')) ||
+			undefined;
+
+		if (maskValue !== lastMaskValue || outerValue !== lastOuterValue) {
+			setLastMaskValue(maskValue);
 			setLastOuterValue(outerValue);
 
-			if (first || outerValue !== value) {
+			if (maskValue !== lastMaskValue || outerValue !== value) {
 				updateDisplayValue(outerValue ?? '');
 			}
 		}
-	}, [first, outerValue, lastOuterValue, value, updateDisplayValue]);
+	}, [
+		lastMaskValue,
+		setLastMaskValue,
+		maskGenerator,
+		outerValue,
+		lastOuterValue,
+		value,
+		updateDisplayValue,
+	]);
 
 	React.useEffect(() => {
 		if (value !== lastValue) {
