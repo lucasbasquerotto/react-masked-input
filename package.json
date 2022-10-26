@@ -1,6 +1,6 @@
 {
   "name": "react-hook-mask",
-  "version": "1.1.10",
+  "version": "1.1.11",
   "description": "React masked input component and hooks",
   "repository": {
     "type": "git",
@@ -20,15 +20,14 @@
   "files": [
     "/dist"
   ],
-  "dependencies": {},
   "peerDependencies": {
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "react-scripts": "5.0.0"
+    "react": ">= 17.0.0",
+    "react-dom": ">= 17.0.0",
+    "react-scripts": "^0.9.3"
   },
   "devDependencies": {
-    "@types/react": "17.0.0",
-    "@types/react-dom": "17.0.0",
+    "@types/react": "18.0.22",
+    "@types/react-dom": "18.0.7",
     "@typescript-eslint/eslint-plugin": "5.9.0",
     "@typescript-eslint/parser": "5.9.0",
     "eslint": "8.0.0",
