@@ -1,5 +1,5 @@
 import React from 'react';
-import type { MaskGenerator } from '../utils/mask-util';
+import type { MaskGenerator } from './mask-util';
 
 const createString = (size: number): string => {
 	let s = '';
@@ -14,7 +14,7 @@ const createString = (size: number): string => {
 const maskMain = (
 	value: string,
 	maskGenerator: MaskGenerator,
-): { maskedValue: string | null; mask: string } => {
+): { maskedValue: string | null; mask: string; transformOffset: number } => {
 	value = value.toString();
 
 	const rules = maskGenerator.rules;
@@ -50,37 +50,48 @@ const maskMain = (
 		}
 	}
 
+	let transformOffset = 0;
+
 	if (transform) {
-		newValue = transform(newValue);
+		const beforeTransform = newValue;
+		newValue = transform(beforeTransform);
+		transformOffset = (newValue?.length ?? 0) - (beforeTransform?.length ?? 0);
 	}
 
-	return { maskedValue: newValue, mask };
+	return { maskedValue: newValue, mask, transformOffset };
 };
 
 const mask = (
 	value: string,
 	maskGenerator: MaskGenerator,
-): { maskedValue: string | null; mask: string } => {
-	const { maskedValue, mask } = maskMain(value, maskGenerator);
-	const { maskedValue: shouldBeTheSame, mask: newMask } = maskMain(
+): { maskedValue: string | null; mask: string; transformOffset: number } => {
+	const { maskedValue, mask, transformOffset } = maskMain(value, maskGenerator);
+	const { maskedValue: maskedValueAgain } = maskMain(
 		maskedValue ?? '',
 		maskGenerator,
 	);
 
-	if (maskedValue !== shouldBeTheSame) {
-		if (typeof console !== undefined) {
-			console?.error(
-				'mask applied to value should not change when applied again',
-				'-> before: ' + value,
-				'-> after: ' + maskedValue + ' (mask: ' + mask + ')',
-				'-> again: ' + shouldBeTheSame + ' (mask: ' + newMask + ')',
-			);
-		}
+	if (maskedValue !== maskedValueAgain) {
+		const { maskedValue: shouldBeTheSame, mask: newMask } = maskMain(
+			maskedValue ?? '',
+			maskGenerator,
+		);
 
-		return { maskedValue: value, mask };
+		if (maskedValueAgain !== shouldBeTheSame) {
+			if (typeof console !== 'undefined') {
+				console?.error(
+					'mask applied to value should not change when applied again',
+					'-> before: ' + value,
+					'-> after: ' + maskedValueAgain + ' (mask: ' + mask + ')',
+					'-> again: ' + shouldBeTheSame + ' (mask: ' + newMask + ')',
+				);
+			}
+
+			return { maskedValue: value, mask, transformOffset: 0 };
+		}
 	}
 
-	return { maskedValue, mask };
+	return { maskedValue, mask, transformOffset };
 };
 
 const unmask = (
@@ -270,7 +281,7 @@ const getExpectedCursorPos = (args: {
 	// The mask static offset corresponds to the number of static chars present in the new
 	// value not present in it before applying the mask before the starting position (the
 	// cursor should go forward according to this offset after applying the mask)
-	const maskStaticOffset =
+	const maskStaticOffsetTmp =
 		newMask &&
 		valueBeforeMaskMasked === displayValue &&
 		len03 < len02 &&
@@ -327,6 +338,10 @@ const getExpectedCursorPos = (args: {
 						).offset,
 			  )
 			: 0;
+	const maskStaticOffset =
+		maskStaticOffsetTmp > 0 && diffStaticCharsTmp > 0 && len01 < len02
+			? Math.max(maskStaticOffsetTmp - diffStaticCharsTmp, 0)
+			: maskStaticOffsetTmp;
 
 	// For the mask offset, if the string before the mask was applied
 	// was bigger than mask, consider only user provided chars
@@ -395,7 +410,7 @@ const getExpectedCursorPos = (args: {
 
 	// The offset of dynamic chars is used to correct the cursor when the number of user
 	// provided chars before the last cursor position changed (when the mask changes)
-	const dynamicCharsOffset = noChange
+	const dynamicCharsOffsetTmp = noChange
 		? 0
 		: createString(Math.min(lastCursorPosition, cursorPosition))
 				.split('')
@@ -419,6 +434,10 @@ const getExpectedCursorPos = (args: {
 
 					return acc;
 				}, 0);
+	const dynamicCharsOffset =
+		dynamicCharsOffsetTmp < 0 && diffStaticCharsTmp > 0
+			? Math.min(dynamicCharsOffsetTmp + diffStaticCharsTmp, 0)
+			: dynamicCharsOffsetTmp;
 
 	// To calculate the remaining, it's considered the number of dynamic chars added (minus the
 	// added chars before the last cursor position due to a change in the mask) plus the new static
@@ -805,12 +824,24 @@ export const useMask = ({
 				setLastMask(undefined);
 				return { displayValue: '' };
 			} else if (maskGenerator) {
-				const { maskedValue, mask: currentMask } = mask(value, maskGenerator);
+				const {
+					maskedValue,
+					mask: currentMask,
+					transformOffset,
+				} = mask(value, maskGenerator);
 				const processedValue = processValue(maskedValue ?? '', maskGenerator);
 
 				setDisplayValue(maskedValue ?? undefined);
 				setValue(processedValue ?? undefined);
 				setLastMask(maskGenerator);
+
+				if (transformOffset && updateCursor && getCursorPosition) {
+					const cursorPosition = getCursorPosition();
+					const newCursorPosition = cursorPosition + transformOffset;
+					setLastCursorPosition(newCursorPosition);
+					setCursorBeforeMaskValue(value);
+					setNeedUpdateCursor(true);
+				}
 
 				return { displayValue: maskedValue, mask: currentMask };
 			} else {
