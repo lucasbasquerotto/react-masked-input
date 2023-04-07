@@ -11,6 +11,7 @@
     "module": "esnext",
     "target": "es5",
     "lib": [
+      "es2021",
       "es6",
       "dom",
       "es2016",

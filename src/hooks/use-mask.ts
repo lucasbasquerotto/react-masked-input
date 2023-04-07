@@ -1,5 +1,5 @@
 import React from 'react';
-import type { MaskGenerator } from './mask-util';
+import type { MaskGenerator } from '../utils/mask-util';
 
 const createString = (size: number): string => {
 	let s = '';
