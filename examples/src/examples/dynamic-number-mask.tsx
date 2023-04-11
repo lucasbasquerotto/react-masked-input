@@ -1,8 +1,8 @@
 import React from 'react';
 import { MaskedInput, createDynamicNumberMaskGenerator } from 'react-hook-mask';
 
-const mask1 = '999-999-9999';
-const mask2 = '999-999-999-9999';
+const mask1 = '(99) 9999-9999';
+const mask2 = '(99) 99999-9999';
 
 const maskGenerator = createDynamicNumberMaskGenerator(mask1, mask2);
 

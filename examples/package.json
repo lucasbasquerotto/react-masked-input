@@ -1,6 +1,6 @@
 {
   "name": "react-hook-mask-examples",
-  "version": "1.1.11",
+  "version": "1.1.13",
   "homepage": ".",
   "description": "React and TypeScript example starter project",
   "keywords": [
@@ -12,20 +12,28 @@
   "dependencies": {
     "react": "file:../node_modules/react",
     "react-dom": "file:../node_modules/react-dom",
-    "react-scripts": "5.0.0",
-    "react-hook-mask": "file:.."
+    "react-hook-mask": "file:..",
+    "react-scripts": "^5.0.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.4.3",
+    "@types/jest": "29.5.0",
+    "@types/react": "18.0.34",
     "@typescript-eslint/eslint-plugin": "5.9.0",
     "@typescript-eslint/parser": "5.9.0",
-    "eslint": "8.0.0",
+    "eslint": "8.1.0",
     "eslint-config-react-app": "7.0.0",
     "eslint-plugin-import": "2.25.4",
     "eslint-plugin-jsx-a11y": "6.5.1",
     "eslint-plugin-prettier": "3.1.4",
     "eslint-plugin-react": "7.28.0",
     "eslint-plugin-react-hooks": "4.3.0",
-    "typescript": "4.5.2"
+    "typescript": "5.0.4"
+  },
+  "overrides": {
+    "typescript": "5.0.4"
   },
   "scripts": {
     "start": "react-scripts start",

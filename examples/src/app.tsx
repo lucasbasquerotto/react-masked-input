@@ -1,4 +1,5 @@
 import { DEFAULT_MASK_RULES } from 'react-hook-mask';
+import CurrencyMaskedInput from './examples/currency-masked-input';
 import CustomDOMComponent from './examples/custom-dom-component';
 import CustomRules from './examples/custom-rules';
 import DynamicMask from './examples/dynamic-mask';
@@ -57,7 +58,7 @@ export default function App() {
 				</p>
 			</div>
 
-			<div className="section">
+			<div className="section" data-testid="quickstart">
 				<h2 className="title">Quickstart</h2>
 
 				<div className="content">
@@ -65,7 +66,7 @@ export default function App() {
 				</div>
 			</div>
 
-			<div className="section">
+			<div className="section" data-testid="custom-rules">
 				<h2 className="title">Custom Rules</h2>
 
 				<div className="content">
@@ -73,7 +74,7 @@ export default function App() {
 				</div>
 			</div>
 
-			<div className="section">
+			<div className="section" data-testid="dynamic-number-mask">
 				<h2 className="title">Dynamic Number Mask</h2>
 
 				<div className="content">
@@ -81,7 +82,7 @@ export default function App() {
 				</div>
 			</div>
 
-			<div className="section">
+			<div className="section" data-testid="dynamic-mask">
 				<h2 className="title">Dynamic Mask</h2>
 
 				<div className="content">
@@ -89,7 +90,7 @@ export default function App() {
 				</div>
 			</div>
 
-			<div className="section">
+			<div className="section" data-testid="custom-dom-component">
 				<h2 className="title">Custom DOM Component</h2>
 
 				<div className="content">
@@ -98,12 +99,20 @@ export default function App() {
 				</div>
 			</div>
 
-			<div className="section">
+			<div className="section" data-testid="custom-mask-hook">
 				<h2 className="title">Custom Mask Hook</h2>
 
 				<div className="content">
 					<CustomHookComponent />
 					<div className="info">Mask: {customHookMask}</div>
+				</div>
+			</div>
+
+			<div className="section" data-testid="currency-mask">
+				<h2 className="title">Currency Mask</h2>
+
+				<div className="content">
+					<CurrencyMaskedInput />
 				</div>
 			</div>
 		</div>

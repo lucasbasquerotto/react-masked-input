@@ -1,7 +1,7 @@
 import React from 'react';
 import { MaskedInput, createDefaultMaskGenerator } from 'react-hook-mask';
 
-const mask = '999 999 9999';
+const mask = '(99) 9999-9999';
 const maskGenerator = createDefaultMaskGenerator(mask);
 
 const Quickstart = () => {
