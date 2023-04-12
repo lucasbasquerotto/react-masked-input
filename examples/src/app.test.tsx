@@ -25,10 +25,20 @@ const testSection = (
 	});
 };
 
+const clearInput = async (input: HTMLInputElement) => {
+	input.value = '';
+	await userEvent.keyboard(' ');
+	await userEvent.keyboard('{backspace}');
+	expect(input).toHaveValue('');
+	expectPosition(input, 0);
+};
+
 const expectPosition = (input: HTMLInputElement, position: number) => {
 	expect(input.selectionStart).toStrictEqual(position);
 	expect(input.selectionEnd).toStrictEqual(position);
 };
+
+// Examples (cursor is |):
 
 const staticExamples = async (input: HTMLInputElement) => {
 	// Example 01:
@@ -36,9 +46,7 @@ const staticExamples = async (input: HTMLInputElement) => {
 	// Number 1 added (valueBeforeMask): (12) 34561|-7891
 	// Mask applied (displayValue): (12) 3456-|1789
 	// Offset applied: (12) 3456-1|789
-	input.value = '';
-	expect(input).toHaveValue('');
-	expectPosition(input, 0);
+	await clearInput(input);
 	await userEvent.keyboard('1234567891');
 	expect(input).toHaveValue('(12) 3456-7891');
 	expectPosition(input, 14);
@@ -61,9 +69,7 @@ const staticExamples = async (input: HTMLInputElement) => {
 	// Delete char after (valueBeforeMask): (|2) 3456-7
 	// Mask applied (displayValue): (|23) 4567
 	// Offset applied: (|23) 4567
-	input.value = '';
-	expect(input).toHaveValue('');
-	expectPosition(input, 0);
+	await clearInput(input);
 	await userEvent.keyboard('1234567');
 	expect(input).toHaveValue('(12) 3456-7');
 	expectPosition(input, 11);
@@ -79,9 +85,7 @@ const staticExamples = async (input: HTMLInputElement) => {
 	// Delete char before (valueBeforeMask): (|2) 3456-7
 	// Mask applied (displayValue): (|23) 4567
 	// Offset applied: (|23) 4567
-	input.value = '';
-	expect(input).toHaveValue('');
-	expectPosition(input, 0);
+	await clearInput(input);
 	await userEvent.keyboard('1234567');
 	expect(input).toHaveValue('(12) 3456-7');
 	expectPosition(input, 11);
@@ -107,9 +111,7 @@ const staticExamples = async (input: HTMLInputElement) => {
 	// Delete after (valueBeforeMask): (12)|3456-7891
 	// Mask applied (displayValue): (12)| 3456-7891
 	// Offset applied: (12) |3456-7891
-	input.value = '';
-	expect(input).toHaveValue('');
-	expectPosition(input, 0);
+	await clearInput(input);
 	await userEvent.keyboard('1234567891');
 	expect(input).toHaveValue('(12) 3456-7891');
 	expectPosition(input, 14);
@@ -128,9 +130,7 @@ const staticExamples = async (input: HTMLInputElement) => {
 	// Delete before (valueBeforeMask): (12)|3456-7891
 	// Mask applied (displayValue): (12)| 3456-7891
 	// Offset applied: (12|) 3456-7891
-	input.value = '';
-	expect(input).toHaveValue('');
-	expectPosition(input, 0);
+	await clearInput(input);
 	await userEvent.keyboard('1234567891');
 	expect(input).toHaveValue('(12) 3456-7891');
 	expectPosition(input, 14);
@@ -164,9 +164,7 @@ const staticExamples = async (input: HTMLInputElement) => {
 	// '912' pasted (valueBeforeMask): (12) 345912|6-7891
 	// Mask applied (displayValue): (12) 3459-1|267
 	// Offset applied: (12) 3459-12|67
-	input.value = '';
-	expect(input).toHaveValue('');
-	expectPosition(input, 0);
+	await clearInput(input);
 	await userEvent.keyboard('1234567891');
 	expect(input).toHaveValue('(12) 3456-7891');
 	expectPosition(input, 14);
@@ -189,16 +187,14 @@ const staticExamples = async (input: HTMLInputElement) => {
 	// '1+2-3' pasted (valueBeforeMask): (12) 3456-1+2-3|7891
 	// Mask applied (displayValue): (12) 3456-1237|
 	// Offset applied: (12) 3456-123|7
-	input.value = '';
-	expect(input).toHaveValue('');
-	expectPosition(input, 0);
+	await clearInput(input);
 	await userEvent.keyboard('1234567891');
 	expect(input).toHaveValue('(12) 3456-7891');
 	expectPosition(input, 14);
 	input.selectionStart = 10;
 	input.selectionEnd = 10;
 	expectPosition(input, 10);
-	await userEvent.keyboard('1+2-3');
+	await userEvent.paste('1+2-3');
 	expect(input).toHaveValue('(12) 3456-1237');
 	expectPosition(input, 13);
 
@@ -214,9 +210,7 @@ const staticExamples = async (input: HTMLInputElement) => {
 	// Select and delete from 2 to 4 (valueBeforeMask): (1|5
 	// Mask applied (displayValue): (1|5
 	// Offset applied: (1|5
-	input.value = '';
-	expect(input).toHaveValue('');
-	expectPosition(input, 0);
+	await clearInput(input);
 	await userEvent.keyboard('12345');
 	expect(input).toHaveValue('(12) 345');
 	expectPosition(input, 8);
@@ -242,9 +236,7 @@ const staticExamples = async (input: HTMLInputElement) => {
 	// Select everything and type 9 (valueBeforeMask): 9|
 	// Mask applied (displayValue): (|9
 	// Offset applied: (9|
-	input.value = '';
-	expect(input).toHaveValue('');
-	expectPosition(input, 0);
+	await clearInput(input);
 	await userEvent.keyboard('12345');
 	expect(input).toHaveValue('(12) 345');
 	expectPosition(input, 8);
@@ -270,9 +262,7 @@ const staticExamples = async (input: HTMLInputElement) => {
 	// Number 1 added (valueBeforeMask): (1|23) 4567
 	// Mask applied (displayValue): (1|2) 3456-7
 	// Offset applied: (1|2) 3456-7
-	input.value = '';
-	expect(input).toHaveValue('');
-	expectPosition(input, 0);
+	await clearInput(input);
 	await userEvent.keyboard('234567');
 	expect(input).toHaveValue('(23) 4567');
 	expectPosition(input, 9);
@@ -295,10 +285,8 @@ const dynamicExamples = async (input: HTMLInputElement) => {
 	// Before the change (oldDisplayValue): (12) 3456-|7812
 	// Number 9 added (valueBeforeMask): (12) 3456-9|7812
 	// Mask applied (displayValue): (12) 34569-|7812
-	// Offset applied: (12) 34569|-7812
-	input.value = '';
-	expect(input).toHaveValue('');
-	expectPosition(input, 0);
+	// Offset applied: (12) 34569-|7812
+	await clearInput(input);
 	await userEvent.keyboard('1234567812');
 	expect(input).toHaveValue('(12) 3456-7812');
 	expectPosition(input, 14);
@@ -306,7 +294,7 @@ const dynamicExamples = async (input: HTMLInputElement) => {
 	input.selectionEnd = 10;
 	await userEvent.keyboard('9');
 	expect(input).toHaveValue('(12) 34569-7812');
-	expectPosition(input, 10);
+	expectPosition(input, 11);
 
 	// -> Details for 11:
 	// - lastCursorPosition=10 (oldDisplayValue)
@@ -328,9 +316,7 @@ const dynamicExamples = async (input: HTMLInputElement) => {
 	// Delete before (valueBeforeMask): (12) 3456|-8912
 	// Mask applied (displayValue): (12) 3456|-8912
 	// Offset applied: (12) 3456|-8912
-	input.value = '';
-	expect(input).toHaveValue('');
-	expectPosition(input, 0);
+	await clearInput(input);
 	await userEvent.keyboard('12345678912');
 	expect(input).toHaveValue('(12) 34567-8912');
 	expectPosition(input, 15);
@@ -345,9 +331,7 @@ const dynamicExamples = async (input: HTMLInputElement) => {
 	// Delete after (valueBeforeMask): (12) 3456|-8912
 	// Mask applied (displayValue): (12) 3456|-8912
 	// Offset applied: (12) 3456|-8912
-	input.value = '';
-	expect(input).toHaveValue('');
-	expectPosition(input, 0);
+	await clearInput(input);
 	await userEvent.keyboard('12345678912');
 	expect(input).toHaveValue('(12) 34567-8912');
 	expectPosition(input, 15);
@@ -416,6 +400,53 @@ testSection(
 		await userEvent.keyboard('1');
 		expect(input).toHaveValue('(12) 3456-7891');
 		expectPosition(input, 14);
+
+		await clearInput(input);
+		await userEvent.paste('1-2-34-5-6-78-9-1');
+		expect(input).toHaveValue('(12) 3456-7891');
+		expectPosition(input, 14);
+		input.selectionStart = 8;
+		input.selectionEnd = 8;
+		await userEvent.paste('1.2.3.4');
+		expect(input).toHaveValue('(12) 3451-2346');
+		expectPosition(input, 13);
+
+		await clearInput(input);
+		await userEvent.paste('1-2-34-5-6-78-9-1');
+		expect(input).toHaveValue('(12) 3456-7891');
+		expectPosition(input, 14);
+		input.selectionStart = 2;
+		input.selectionEnd = 2;
+		await userEvent.paste('1.2.3.4');
+		expect(input).toHaveValue('(11) 2342-3456');
+		expectPosition(input, 8);
+
+		await clearInput(input);
+		await userEvent.paste('1111111111');
+		expect(input).toHaveValue('(11) 1111-1111');
+		expectPosition(input, 14);
+		input.selectionStart = 2;
+		input.selectionEnd = 2;
+		await userEvent.paste('1');
+		expect(input).toHaveValue('(11) 1111-1111');
+		expectPosition(input, 3);
+		await userEvent.paste('1');
+		expect(input).toHaveValue('(11) 1111-1111');
+		expectPosition(input, 4);
+		await userEvent.paste('1');
+		expect(input).toHaveValue('(11) 1111-1111');
+		expectPosition(input, 5);
+		input.selectionStart = 12;
+		input.selectionEnd = 12;
+		await userEvent.paste('1');
+		expect(input).toHaveValue('(11) 1111-1111');
+		expectPosition(input, 13);
+		await userEvent.paste('1');
+		expect(input).toHaveValue('(11) 1111-1111');
+		expectPosition(input, 14);
+		await userEvent.paste('1');
+		expect(input).toHaveValue('(11) 1111-1111');
+		expectPosition(input, 14);
 	},
 	staticExamples,
 );
@@ -472,6 +503,16 @@ testSection(
 	async (input) => {
 		expect(input).toHaveValue('');
 		expectPosition(input, 0);
+
+		await clearInput(input);
+		await userEvent.paste('1-2-34-5-6-78-9-12');
+		expect(input).toHaveValue('(12) 34567-8912');
+		expectPosition(input, 15);
+		input.selectionStart = 2;
+		input.selectionEnd = 2;
+		await userEvent.paste('1.2.3.4');
+		expect(input).toHaveValue('(11) 23423-4567');
+		expectPosition(input, 8);
 	},
 	dynamicExamples,
 );
@@ -629,6 +670,8 @@ testSection('custom-dom-component', async (input) => {
 });
 
 testSection('custom-mask-hook', async (input) => {
+	await clearInput(input);
+	await userEvent.keyboard('1-2--3---4--5-6--7---8--9-0--1');
 	expect(input).toHaveValue('(123) 4567-8901');
 	expectPosition(input, 15);
 });
@@ -710,4 +753,117 @@ testSection('currency-mask', async (input) => {
 	await userEvent.keyboard('{backspace}');
 	expect(input).toHaveValue('$ 0,00');
 	expectPosition(input, 6);
+
+	input.selectionStart = 0;
+	input.selectionEnd = input.value.length;
+	await userEvent.keyboard('{backspace}');
+	await userEvent.keyboard('0');
+	expect(input).toHaveValue('$ 0,00');
+	expectPosition(input, 6);
+	input.selectionStart = 3;
+	input.selectionEnd = 3;
+
+	await userEvent.keyboard('1');
+	expect(input).toHaveValue('$ 1,00');
+	expectPosition(input, 3);
+
+	await userEvent.keyboard('2');
+	expect(input).toHaveValue('$ 12,00');
+	expectPosition(input, 4);
+
+	await userEvent.keyboard('3');
+	expect(input).toHaveValue('$ 123,00');
+	expectPosition(input, 5);
+
+	await userEvent.keyboard('4');
+	expect(input).toHaveValue('$ 1.234,00');
+	expectPosition(input, 7);
+
+	await userEvent.keyboard('5');
+	expect(input).toHaveValue('$ 12.345,00');
+	expectPosition(input, 8);
+
+	await userEvent.keyboard('6');
+	expect(input).toHaveValue('$ 123.456,00');
+	expectPosition(input, 9);
+
+	await userEvent.keyboard('7');
+	expect(input).toHaveValue('$ 1.234.567,00');
+	expectPosition(input, 11);
+
+	await clearInput(input);
+	input.selectionStart = 0;
+	input.selectionEnd = input.value.length;
+	await userEvent.keyboard('{backspace}');
+	await userEvent.keyboard('0');
+	expect(input).toHaveValue('$ 0,00');
+	expectPosition(input, 6);
+	input.selectionStart = 3;
+	input.selectionEnd = 3;
+
+	await userEvent.keyboard('123');
+	expect(input).toHaveValue('$ 123,00');
+	expectPosition(input, 5);
+
+	await userEvent.keyboard('4');
+	expect(input).toHaveValue('$ 1.234,00');
+	expectPosition(input, 7);
+
+	input.selectionStart = 4;
+	input.selectionEnd = 4;
+
+	await userEvent.keyboard('{delete}');
+	expect(input).toHaveValue('$ 134,00');
+	expectPosition(input, 3);
+
+	await userEvent.keyboard('{delete}');
+	expect(input).toHaveValue('$ 14,00');
+	expectPosition(input, 3);
+
+	await userEvent.keyboard('{delete}');
+	expect(input).toHaveValue('$ 1,00');
+	expectPosition(input, 3);
+
+	await userEvent.keyboard('{delete}');
+	expect(input).toHaveValue('$ 1,00');
+	expectPosition(input, 3);
+
+	await userEvent.keyboard('{delete}');
+	expect(input).toHaveValue('$ 1,00');
+	expectPosition(input, 4);
+
+	await userEvent.keyboard('{delete}');
+	expect(input).toHaveValue('$ 0,10');
+	expectPosition(input, 5);
+
+	await userEvent.keyboard('{delete}');
+	expect(input).toHaveValue('$ 0,01');
+	expectPosition(input, 6);
+
+	await userEvent.keyboard('{delete}');
+	expect(input).toHaveValue('$ 0,01');
+	expectPosition(input, 6);
+
+	await userEvent.keyboard('{backspace}');
+	expect(input).toHaveValue('$ 0,00');
+	expectPosition(input, 6);
+
+	await userEvent.keyboard('1234567');
+	expect(input).toHaveValue('$ 12.345,67');
+	expectPosition(input, 11);
+	input.selectionStart = 8;
+	input.selectionEnd = 8;
+	await userEvent.keyboard('{backspace}');
+	expect(input).toHaveValue('$ 1.234,67');
+	expectPosition(input, 7);
+
+	await clearInput(input);
+	await userEvent.paste('$ 1.235,67');
+	expect(input).toHaveValue('$ 1.235,67');
+	expectPosition(input, 10);
+	input.selectionStart = 6;
+	input.selectionEnd = 6;
+	await userEvent.keyboard('{backspace}');
+	expect(input).toHaveValue('$ 125,67');
+	expectPosition(input, 4);
 });

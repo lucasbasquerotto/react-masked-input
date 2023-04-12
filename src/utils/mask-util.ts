@@ -85,7 +85,7 @@ export const getCurrencyMaskGenerator = ({
 		generateMask: (value) => {
 			const rawVal = getRawValue(value);
 			const len = rawVal.length;
-			const lenCents = centsSeparator ? 2 : 0;
+			const lenCents = centsSeparator ? Math.min(2, Math.max(len - 1, 0)) : 0;
 			const lenNoCents = Math.max(len - lenCents, 0);
 
 			const mask =
@@ -97,7 +97,7 @@ export const getCurrencyMaskGenerator = ({
 							.fill('999')
 							.join(thousandSeparator)
 					: '') +
-				centsSeparator +
+				(lenCents ? centsSeparator : '') +
 				'9'.repeat(lenCents);
 
 			return mask;
