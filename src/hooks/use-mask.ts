@@ -21,39 +21,36 @@ export const useMask = ({
 	setCursorPosition,
 	keepMask,
 }: UseMaskProps) => {
-	const [lastOuterValue, setLastOuterValue] = React.useState(outerValue);
-	const [value, setValue] = React.useState(outerValue);
-	const [lastValue, setLastValue] = React.useState(value);
-	const [displayValue, setDisplayValue] = React.useState(value);
-	const [lastDisplayValue, setLastDisplayValue] = React.useState(displayValue);
-	const [lastCursorValue, setLastCursorValue] = React.useState(displayValue);
-	const [lastCursorPosition, setLastCursorPosition] = React.useState(
-		displayValue?.length ?? 0,
-	);
-	const [cursorBeforeMaskValue, setCursorBeforeMaskValue] =
-		React.useState(displayValue);
-	const [needUpdateCursor, setNeedUpdateCursor] = React.useState(false);
-	const [lastWentBack, setLastWentBack] = React.useState(false);
+	const lastOuterValueRef = React.useRef(outerValue);
+	const lastValueRef = React.useRef(outerValue);
+	const lastDisplayValueRef = React.useRef(outerValue);
+	const lastCursorPositionRef = React.useRef(outerValue?.length ?? 0);
+	const cursorBeforeMaskValueRef = React.useRef(outerValue);
+	const lastWentBackRef = React.useRef(false);
+	const lastMaskRef = React.useRef(maskGenerator);
+	const lastCursorMaskRef = React.useRef(maskGenerator);
 
-	const [lastMask, setLastMask] = React.useState(maskGenerator);
-	const [lastCursorMask, setLastCursorMask] = React.useState(maskGenerator);
-	const [lastMaskValue, setLastMaskValue] = React.useState<string | undefined>(
-		undefined,
-	);
+	const [value, setValue] = React.useState(outerValue);
+	const [displayValue, setDisplayValue] = React.useState(value);
+	const [lastCursorValue, setLastCursorValue] = React.useState(displayValue);
+	const [lastMaskValue, setLastMaskValue] = React.useState<
+		string | undefined
+	>();
+	const [needUpdateCursor, setNeedUpdateCursor] = React.useState(false);
 
 	const updateDisplayValue = React.useCallback(
-		(value: string, updateCursor?: boolean) => {
-			if (updateCursor && getCursorPosition) {
+		(value: string, updateCursorFlag?: boolean) => {
+			if (updateCursorFlag && getCursorPosition) {
 				const cursorPosition = getCursorPosition();
-				setLastCursorPosition(cursorPosition);
-				setCursorBeforeMaskValue(value);
+				lastCursorPositionRef.current = cursorPosition;
+				cursorBeforeMaskValueRef.current = value;
 				setNeedUpdateCursor(true);
 			}
 
 			if ((value ?? '').trim() === '') {
 				setDisplayValue('');
 				setValue('');
-				setLastMask(undefined);
+				lastMaskRef.current = undefined;
 				return { displayValue: '' };
 			} else if (maskGenerator) {
 				const {
@@ -65,13 +62,13 @@ export const useMask = ({
 
 				setDisplayValue(maskedValue ?? undefined);
 				setValue(processedValue ?? undefined);
-				setLastMask(maskGenerator);
+				lastMaskRef.current = maskGenerator;
 
-				if (transformOffset && updateCursor && getCursorPosition) {
+				if (transformOffset && updateCursorFlag && getCursorPosition) {
 					const cursorPosition = getCursorPosition();
 					const newCursorPosition = cursorPosition + transformOffset;
-					setLastCursorPosition(newCursorPosition);
-					setCursorBeforeMaskValue(value);
+					lastCursorPositionRef.current = newCursorPosition;
+					cursorBeforeMaskValueRef.current = value;
 					setNeedUpdateCursor(true);
 				}
 
@@ -79,25 +76,12 @@ export const useMask = ({
 			} else {
 				setDisplayValue(value);
 				setValue(value);
-				setLastMask(undefined);
+				lastMaskRef.current = undefined;
 				return { displayValue: value };
 			}
 		},
 		[maskGenerator, getCursorPosition],
 	);
-
-	const changeDisplayValue = React.useCallback(
-		(value: string) => {
-			updateDisplayValue(value, true);
-		},
-		[updateDisplayValue],
-	);
-
-	React.useEffect(() => {
-		if (setCursorPosition && lastCursorPosition != null) {
-			setCursorPosition(lastCursorPosition);
-		}
-	}, [setCursorPosition, lastCursorPosition]);
 
 	const updateCursor = React.useCallback(
 		({
@@ -118,28 +102,22 @@ export const useMask = ({
 					getExpectedCursorPos({
 						displayValue,
 						oldDisplayValue,
-						valueBeforeMask: cursorBeforeMaskValue ?? '',
+						valueBeforeMask: cursorBeforeMaskValueRef.current ?? '',
 						newMask,
 						oldMask,
-						cursorPosition: lastCursorPosition,
-						lastWentBack,
+						cursorPosition: lastCursorPositionRef.current,
+						lastWentBack: lastWentBackRef.current,
 					});
 
-				if (force || lastCursorPosition !== newExpectedCursorPos) {
-					setLastCursorPosition(newExpectedCursorPos);
+				if (force || lastCursorPositionRef.current !== newExpectedCursorPos) {
+					lastCursorPositionRef.current = newExpectedCursorPos;
 					setCursorPosition(newExpectedCursorPos);
 				}
 
-				setLastWentBack(wentBack);
+				lastWentBackRef.current = wentBack;
 			}
 		},
-		[
-			lastCursorPosition,
-			setCursorPosition,
-			getCursorPosition,
-			lastWentBack,
-			cursorBeforeMaskValue,
-		],
+		[setCursorPosition, getCursorPosition],
 	);
 
 	React.useEffect(() => {
@@ -148,9 +126,12 @@ export const useMask = ({
 				maskGenerator?.generateMask(value ?? '')) ||
 			undefined;
 
-		if (maskValue !== lastMaskValue || outerValue !== lastOuterValue) {
+		if (
+			maskValue !== lastMaskValue ||
+			outerValue !== lastOuterValueRef.current
+		) {
 			setLastMaskValue(maskValue);
-			setLastOuterValue(outerValue);
+			lastOuterValueRef.current = outerValue;
 
 			if (maskValue !== lastMaskValue || outerValue !== value) {
 				updateDisplayValue(outerValue ?? '');
@@ -161,73 +142,77 @@ export const useMask = ({
 		setLastMaskValue,
 		maskGenerator,
 		outerValue,
-		lastOuterValue,
 		value,
 		updateDisplayValue,
 	]);
 
 	React.useEffect(() => {
-		if (value !== lastValue) {
-			setLastValue(value);
+		if (value !== lastValueRef.current) {
+			lastValueRef.current = value;
 			updateDisplayValue(value ?? '');
 
 			if (!keepMask && onChange) {
 				onChange(value ?? '');
 			}
 		}
-	}, [value, lastValue, maskGenerator, updateDisplayValue, keepMask, onChange]);
+	}, [value, maskGenerator, updateDisplayValue, keepMask, onChange]);
 
 	React.useEffect(() => {
-		if (displayValue !== lastDisplayValue) {
+		if (displayValue !== lastDisplayValueRef.current) {
 			const { displayValue: newDisplayValue } = updateDisplayValue(
 				displayValue ?? '',
 			);
 
 			if ((newDisplayValue ?? '') === (displayValue ?? '')) {
-				setLastDisplayValue(newDisplayValue ?? undefined);
+				lastDisplayValueRef.current = newDisplayValue ?? undefined;
 
 				if (keepMask && onChange) {
 					onChange(newDisplayValue ?? '');
 				}
 			}
 		}
-	}, [displayValue, lastDisplayValue, updateDisplayValue, keepMask, onChange]);
+	}, [displayValue, updateDisplayValue, keepMask, onChange]);
 
 	React.useEffect(() => {
-		const newPos = getCursorPosition ? getCursorPosition() : lastCursorPosition;
-		const force = newPos !== lastCursorPosition;
+		const newPos = getCursorPosition
+			? getCursorPosition()
+			: lastCursorPositionRef.current;
+		const force = newPos !== lastCursorPositionRef.current;
 
 		if (
-			displayValue === lastDisplayValue &&
-			(lastCursorValue !== lastDisplayValue || force || needUpdateCursor)
+			displayValue === lastDisplayValueRef.current &&
+			(lastCursorValue !== lastDisplayValueRef.current ||
+				force ||
+				needUpdateCursor)
 		) {
 			setNeedUpdateCursor(false);
-			setLastCursorValue(lastDisplayValue);
-			setLastCursorMask(lastMask);
+			setLastCursorValue(lastDisplayValueRef.current);
+			lastCursorMaskRef.current = lastMaskRef.current;
 
 			updateCursor({
-				displayValue: lastDisplayValue ?? '',
+				displayValue: lastDisplayValueRef.current ?? '',
 				oldDisplayValue: lastCursorValue ?? '',
-				newMask: lastMask,
-				oldMask: lastCursorMask,
+				newMask: lastMaskRef.current,
+				oldMask: lastCursorMaskRef.current,
 				force,
 			});
 		}
 	}, [
 		lastCursorValue,
 		displayValue,
-		lastDisplayValue,
-		lastCursorPosition,
-		lastMask,
-		lastCursorMask,
 		needUpdateCursor,
 		getCursorPosition,
 		updateCursor,
 	]);
 
 	const result = React.useMemo(
-		() => ({ displayValue, setDisplayValue: changeDisplayValue }),
-		[displayValue, changeDisplayValue],
+		() => ({
+			displayValue,
+			setDisplayValue: (value: string) => {
+				updateDisplayValue(value, true);
+			},
+		}),
+		[displayValue, updateDisplayValue],
 	);
 
 	return result;

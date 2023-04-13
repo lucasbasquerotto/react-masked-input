@@ -676,6 +676,8 @@ testSection('custom-dom-component', async (input) => {
 });
 
 testSection('custom-mask-hook', async (input) => {
+	expect(input).toHaveValue('(123) 4567-8901');
+
 	await clearInput(input);
 	await userEvent.keyboard('1-2--3---4--5-6--7---8--9-0--1');
 	expect(input).toHaveValue('(123) 4567-8901');
