@@ -220,7 +220,7 @@ export const useMyMask = ({
 
 The hook [useRefMask](src/hooks/use-ref-mask.ts) wraps the generic [useMask](src/hooks/use-mask.ts) hook and was created to allow the use of the component `ref` even if an external `ref` is received without having to add boilerplate to handle this case.
 
-You can see the [useWebMask hook](src/hooks/use-web-mask.ts) provided by this package as a reference.
+You can see the [useWebMask](src/hooks/use-web-mask.ts) and [useNativeMask](src/hooks/use-native-mask.ts) hooks provided by this package as a reference.
 
 ### Currency mask
 
@@ -302,3 +302,44 @@ const Component = () => {
     );
 };
 ```
+
+### React Native
+
+You can use the hook `useNativeMask` instead of having to create a custom react-native hook using the lower level `useRefMask` hook.
+
+This hook is similar to the `useWebMask` hook, except that it's to be used in a react-native `TextInput` (or compatible) component.
+
+```tsx
+import React from 'react';
+import { useNativeMask } from 'react-hook-mask';
+import { TextInput } from 'react-native';
+
+const MaskedInput = React.forwardRef(
+    (
+        { maskGenerator, value: outerValue, onChange, keepMask, ...otherProps },
+        outerRef,
+    ) => {
+        const { ref, value, onChangeText, onSelectionChange } = useNativeMask({
+            maskGenerator,
+            value: outerValue,
+            onChange,
+            keepMask,
+            ref: outerRef,
+        });
+
+        return (
+            <TextInput
+                {...otherProps}
+                ref={ref}
+                value={value}
+                onChangeText={onChangeText}
+                onSelectionChange={onSelectionChange}
+            />
+        );
+    },
+);
+
+export default MaskedInput;
+```
+
+The native component can be used in the same way as any other mask component, [as shown previously](#quickstart).
