@@ -1,11 +1,5 @@
-// Interface and constant
-
-export interface MaskGenerator {
-	rules: Map<string, RegExp>;
-	generateMask: (value: string) => string;
-	transform?: (value: string) => string;
-	keepMask?: boolean;
-}
+import type { MaskGenerator } from '../types/mask-generator';
+import MaskFunctions from './mask';
 
 export const DEFAULT_MASK_RULES = new Map([
 	['A', /[A-Za-z]/],
@@ -14,6 +8,9 @@ export const DEFAULT_MASK_RULES = new Map([
 ]);
 
 // Helper functions
+
+export const mask = (value: string, maskGenerator: MaskGenerator): string =>
+	MaskFunctions.mask(value, maskGenerator)?.maskedValue ?? '';
 
 export const createDefaultMaskGenerator = (mask: string): MaskGenerator => ({
 	rules: DEFAULT_MASK_RULES,
@@ -65,8 +62,12 @@ export const getCurrencyMaskGenerator = ({
 	centsSeparator?: string;
 }): MaskGenerator => {
 	const getRawValue = (value: string): string => {
-		const valNoPrefix = value?.startsWith(prefix)
-			? value?.substring(prefix.length)
+		const valNoPrefix = prefix
+			? value?.startsWith(prefix)
+				? value?.substring(prefix.length)
+				: prefix?.startsWith(value)
+				? ''
+				: value
 			: value;
 
 		const valNoCents = centsSeparator
@@ -108,7 +109,9 @@ export const getCurrencyMaskGenerator = ({
 			const len = rawVal.length;
 			const prefixToUse = value?.startsWith(prefix) ? prefix : '';
 
-			if (centsSeparator && len < 3) {
+			if ((valDigits?.length ?? 0) === 0) {
+				return value;
+			} else if (centsSeparator && len < 3) {
 				return (
 					prefixToUse + '0' + centsSeparator + '0'.repeat(2 - len) + rawVal
 				);

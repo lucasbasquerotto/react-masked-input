@@ -1,6 +1,6 @@
 import React from 'react';
-import type { MaskGenerator } from '../utils/mask-util';
 import { useRefMask } from './use-ref-mask';
+import type { MaskGenerator } from '../types/mask-generator';
 
 export const useWebMask = ({
 	maskGenerator,

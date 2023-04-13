@@ -1,6 +1,6 @@
 import React from 'react';
-import type { MaskGenerator } from '../utils/mask-util';
 import { useMask } from './use-mask';
+import type { MaskGenerator } from '../types/mask-generator';
 
 const useCombinedRefs = <T>(
 	innerRef: React.MutableRefObject<T | null>,

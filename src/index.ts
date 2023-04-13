@@ -1,3 +1,4 @@
+export * from './types/mask-generator';
 export * from './utils/mask-util';
 export * from './hooks/use-mask';
 export * from './hooks/use-ref-mask';
