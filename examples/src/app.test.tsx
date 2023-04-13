@@ -57,13 +57,6 @@ const staticExamples = async (input: HTMLInputElement) => {
 	expect(input).toHaveValue('(12) 3456-1789');
 	expectPosition(input, 11);
 
-	// -> Details for 01:
-	// - lastCursorPosition=9 (oldDisplayValue)
-	// - cursorPosition=10 (displayValue)
-	// - remaining=1 (because '1' at the end was removed and maskRemovedOffset=1)
-	// - offset=2 ('-' is a static char and is skipped, increasing the offset)
-	// - position=11 (lastCursorPosition + offset)
-
 	// Example 02:
 	// Before the change (oldDisplayValue): (|12) 3456-7
 	// Delete char after (valueBeforeMask): (|2) 3456-7
@@ -95,16 +88,11 @@ const staticExamples = async (input: HTMLInputElement) => {
 	await userEvent.keyboard('{backspace}');
 	expect(input).toHaveValue('(23) 4567');
 	expectPosition(input, 1);
+
 	// -> Details for 02 and 03:
-	// - lastCursorPosition=2 (oldDisplayValue)
-	// - cursorPosition=1 (displayValue)
-	// - remaining=-1 (because the number of user-provided chars reduced by 1)
-	// - offset=-1 (remaining)
-	// - position=1 (lastCursorPosition + offset)
 	// Important: from the point of view of the algorithm, both are the same, because it
 	// doesn't actually know where the cursor was initially, only when displayValue
-	// is already defined - cursorPosition, and then calculates lastCursorPosition
-	// based on it.
+	// is already defined, and then tries to calculate lastCursorPosition based on it.
 
 	// Example 04 (may not work the 1st time, but at most at the 2nd try it will work):
 	// Before the change (oldDisplayValue): (12)| 3456-7891
@@ -142,22 +130,19 @@ const staticExamples = async (input: HTMLInputElement) => {
 	expectPosition(input, 3);
 
 	// -> Details for 04 and 05:
-	// - lastCursorPosition=4 (oldDisplayValue)
-	// - cursorPosition=4 (displayValue)
-	// - offset=1 (goToTheFrontNoChange for 04 -> ' ' is a static word and adds 1)
-	// - offset=-1 (goToTheBackNoChange for 05 -> ')' is a static word and subtracts 1)
-	// - position=5 (for 04)
-	// - position=3 (for 05)
 	// Important: Observe that the values of valueBeforeMask and displayValue of
 	// both examples are the same, as well as the value of cursorPosition
 	// (which is 4, that we get AFTER the value changed).
-	// Also note that lastCursorPosition in the example '05' should be 5, but we don't
-	// actually know that (because no user-provided char was removed), which makes
-	// examples 04 and 05 be seen as the same from the algorithm point-of-view, in such a
-	// way that the flag 'lastWentBack' is used to know if the last cursor change (without
-	// changing user provided chars) went forward and backward, alternating the flag
-	// value so that deleting chars after and before the cursor will work at most in
-	// the second try (without "blocking" the user from deleting chars).
+	// Also note that examples 04 and 05 are seen as the same from the algorithm
+	// point-of-view, in such a way that the flag 'lastWentBack' is used to know
+	// if the last cursor change (without changing user provided chars) went forward
+	// and backward, alternating the flag value so that deleting chars after and
+	// before the cursor will work at most in the second try (without "blocking"
+	// the user from deleting chars). It can be seen that the position in the
+	// example 4 is wrong the 1st time, but correct the 2nd. The example 5 is
+	// correct the 1st time (it's equal to the 1st time of example 4, at position 3,
+	// but depending of previous actions, it could be wrong, equal to the 2nd time
+	// of example 4, at position 5, but the next try would be correct, at position 3).
 
 	// Example 06:
 	// Before the change (oldDisplayValue): (12) 345|6-7891
@@ -175,13 +160,6 @@ const staticExamples = async (input: HTMLInputElement) => {
 	expect(input).toHaveValue('(12) 3459-1267');
 	expectPosition(input, 12);
 
-	// -> Details for 06:
-	// - lastCursorPosition=8 (oldDisplayValue)
-	// - cursorPosition=11 (displayValue)
-	// - remaining=3 (because maskRemovedOffset=3)
-	// - offset=4 ('-' is a static char and is skipped, increasing the offset)
-	// - position=12 (lastCursorPosition + offset)
-
 	// Example 07:
 	// Before the change (oldDisplayValue): (12) 3456-|7891
 	// '1+2-3' pasted (valueBeforeMask): (12) 3456-1+2-3|7891
@@ -198,13 +176,6 @@ const staticExamples = async (input: HTMLInputElement) => {
 	expect(input).toHaveValue('(12) 3456-1237');
 	expectPosition(input, 13);
 
-	// -> Details for 07:
-	// - lastCursorPosition=10 (oldDisplayValue)
-	// - cursorPosition=15 (displayValue)
-	// - remaining=3 (because maskRemovedOffset=3, with only the chars '123' considered)
-	// - offset=3 (remaining)
-	// - position=13 (lastCursorPosition + offset)
-
 	// Example 08:
 	// Before the change (oldDisplayValue): (1|2) 345
 	// Select and delete from 2 to 4 (valueBeforeMask): (1|5
@@ -219,17 +190,6 @@ const staticExamples = async (input: HTMLInputElement) => {
 	await userEvent.keyboard('{backspace}');
 	expect(input).toHaveValue('(15');
 	expectPosition(input, 2);
-
-	// -> Details for 08:
-	// - lastCursorPosition=5 (oldDisplayValue)
-	// - cursorPosition=2 (displayValue)
-	// - remaining=-3 (because 3 user provided chars were removed)
-	// - offset=-3 (remaining)
-	// - position=2 (lastCursorPosition + offset)
-	// Important: Keep in mind that, as demonstrated in other examples,
-	// lastCursorPosition is guessed (it doesn't necessarily correspond
-	// to the initial cursor position, especially in this case in which
-	// several chars were selected).
 
 	// Example 09:
 	// Before the change (oldDisplayValue): (12) 345
@@ -246,17 +206,6 @@ const staticExamples = async (input: HTMLInputElement) => {
 	expect(input).toHaveValue('(9');
 	expectPosition(input, 2);
 
-	// -> Details for 09:
-	// - lastCursorPosition=5 (oldDisplayValue)
-	// - cursorPosition=1 (displayValue)
-	// - diffDynamicChars=-4 (because 4 user provided chars were removed)
-	// - maskStaticOffset=1 (because 1 static char, not present previously, was added)
-	// - remaining=-3 (diffDynamicChars + maskStaticOffset)
-	// - offset=-3 (remaining)
-	// - position=2 (lastCursorPosition + offset)
-	// Important: lastCursorPositionTmp was calculated as cursorPosition - diffDynamicChars,
-	// and lastCursorPosition was calculated from it (ended with the same value)
-
 	// Example 10:
 	// Before the change (oldDisplayValue): (|23) 4567
 	// Number 1 added (valueBeforeMask): (1|23) 4567
@@ -271,13 +220,6 @@ const staticExamples = async (input: HTMLInputElement) => {
 	await userEvent.keyboard('1');
 	expect(input).toHaveValue('(12) 3456-7');
 	expectPosition(input, 2);
-
-	// -> Details for 10:
-	// - lastCursorPosition=1 (oldDisplayValue)
-	// - cursorPosition=2 (displayValue)
-	// - remaining=1 (1 new user provided char added)
-	// - offset=1 (remaining)
-	// - position=2 (lastCursorPosition + offset)
 };
 
 const dynamicExamples = async (input: HTMLInputElement) => {
@@ -297,19 +239,7 @@ const dynamicExamples = async (input: HTMLInputElement) => {
 	expectPosition(input, 11);
 
 	// -> Details for 11:
-	// - lastCursorPosition=10 (oldDisplayValue)
-	// - cursorPosition=11 (displayValue)
-	// - diffDynamicChars=1 (newDynamicChars=11 - oldDynamicChars=10)
-	// - remaining=0 (diffDynamicChars=1 - dynamicCharsOffset=1) +
-	// - offset=0 (remaining)
-	// - position=10 (lastCursorPosition + offset)
-	// Important: The remaining amount is 0 because the number of user
-	// provided chars is 1, but the change in the mask made it so that
-	// the initial position applied to the new mask contained the user
-	// provided char (but not the old mask), so the change from the
-	// cursor position from 10 to 11 was reverted back to 10
-	// (diffDynamicChars - dynamicCharsOffset = 0). It's also important
-	// to note that position=11 is not strictly wrong ((12) 34569-|7812).
+	// It's important to note that position=10 is not strictly wrong ((12) 34569|-7812).
 
 	// Example 12:
 	// Before the change (oldDisplayValue): (12) 34567|-8912
@@ -342,12 +272,7 @@ const dynamicExamples = async (input: HTMLInputElement) => {
 	expectPosition(input, 9);
 
 	// -> Details for 12 and 13:
-	// - lastCursorPosition=10 (oldDisplayValue)
-	// - cursorPosition=9 (displayValue)
-	// - diffDynamicChars=-1 (newDynamicChars=10 - oldDynamicChars=11)
-	// - offset=-1 (offset = remaining = diffDynamicChars)
-	// - position=9 (lastCursorPosition + offset)
-	// Important: The examples 12 and 13 are the same from the point of
+	// Important: Both examples are the same from the point of
 	// view of the algorithm (just like examples 02 and 03).
 	// It's also important to note that position=10 is not strictly
 	// wrong (that is, (12) 3456-|8912).

@@ -182,7 +182,7 @@ Extend the hook to be used by a custom component (or several components, as long
 
 The only requirement for the creation of a custom hook is that the input component must have a way to retrieve and to modify the cursor position (in the example below, the read-write property `myPosition` was used as an example).
 
-```ts
+```tsx
 import React from 'react';
 import { useRefMask } from 'react-hook-mask';
 
@@ -221,3 +221,84 @@ export const useMyMask = ({
 The hook [useRefMask](src/hooks/use-ref-mask.ts) wraps the generic [useMask](src/hooks/use-mask.ts) hook and was created to allow the use of the component `ref` even if an external `ref` is received without having to add boilerplate to handle this case.
 
 You can see the [useWebMask hook](src/hooks/use-web-mask.ts) provided by this package as a reference.
+
+### Currency mask
+
+The utilitarian function `getCurrencyMaskGenerator` can create a mask generator that allows the value be displayed as a currency.
+
+```tsx
+import React from 'react';
+import { MaskedInput, getCurrencyMaskGenerator } from 'react-hook-mask';
+
+const maskGenerator = getCurrencyMaskGenerator({
+    prefix: '$ ',
+    thousandSeparator: '.',
+    centsSeparator: ',',
+});
+
+export const CurrencyMaskedInput = () => {
+    const [value, setValue] = React.useState('');
+
+    return (
+        <div>
+            <MaskedInput
+                maskGenerator={maskGenerator}
+                value={value}
+                onChange={setValue}
+            />
+            <div>
+                Mask: {value ? maskGenerator.generateMask(value) : undefined}
+            </div>
+            <div>Value (no mask):</div>
+            {value ? <div>{value}</div> : undefined}
+        </div>
+    );
+};
+```
+
+You can define different currencies (like `US$ `, `R$ `, `€ `), using the prefix, or leave it empty/undefined, if you want only the numeric value.
+
+You can use different separators for thousands, like ` `, `.`, or leave it empty/undefined, if you don't want separators.
+
+You can use different symbols for the cents (decimal) separators, like `.`, `,`, or leave it empty/undefined, if the currency has no cents (like yen and won).
+
+In the example above, for an input of `123456789`, you would see `$ 1.234.567,89` as the output (the displayed value).
+
+### Show the mask as a string
+
+Sometimes you just want to show a masked value as a string. In this case, instead of using an input component, you can just call the `mask` function available in this package:
+
+```tsx
+import { mask } from 'react-hook-mask';
+
+const value = '12345678901';
+
+const Component = () => (
+    <div>
+        <div>Value: {value}</div>
+        <div>Masked: {mask(value, maskGenerator)}</div>
+    </div>
+);
+```
+
+If performance is a concern, the masked value can be memoized:
+
+```tsx
+import { mask } from 'react-hook-mask';
+
+const value = '12345678901';
+
+const Component = () => {
+    const maskedValue = React.useMemo(
+        () => mask(value, maskGenerator),
+        [value],
+    );
+
+    return (
+        <div>
+            <div>Value: {value}</div>
+            <div>Masked: {maskedValue}</div>
+        </div>
+    );
+};
+```

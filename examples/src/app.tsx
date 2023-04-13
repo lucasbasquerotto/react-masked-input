@@ -1,4 +1,4 @@
-import { DEFAULT_MASK_RULES } from 'react-hook-mask';
+import { DEFAULT_MASK_RULES, mask } from 'react-hook-mask';
 import CurrencyMaskedInput from './examples/currency-masked-input';
 import CustomDOMComponent from './examples/custom-dom-component';
 import CustomRules from './examples/custom-rules';
@@ -34,6 +34,8 @@ const CustomHookComponent = () => {
 		/>
 	);
 };
+
+const value = '12345678901';
 
 export default function App() {
 	return (
@@ -113,6 +115,17 @@ export default function App() {
 
 				<div className="content">
 					<CurrencyMaskedInput />
+				</div>
+			</div>
+
+			<div className="section" data-testid="masked-string">
+				<h2 className="title">Masked Value as String</h2>
+
+				<div className="content">
+					<div className="info">Value: {value}</div>
+					<div className="info">
+						Masked: {mask(value, customHookMaskGenerator)}
+					</div>
 				</div>
 			</div>
 		</div>
