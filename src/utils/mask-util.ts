@@ -62,23 +62,7 @@ export const getCurrencyMaskGenerator = ({
 	centsSeparator?: string;
 }): MaskGenerator => {
 	const getRawValue = (value: string): string => {
-		const valNoPrefix = prefix
-			? value?.startsWith(prefix)
-				? value?.substring(prefix.length)
-				: prefix?.startsWith(value)
-				? ''
-				: value
-			: value;
-
-		const valNoCents = centsSeparator
-			? valNoPrefix?.replaceAll(centsSeparator, '')
-			: valNoPrefix;
-
-		const valDigits = thousandSeparator
-			? valNoCents?.replaceAll(thousandSeparator, '')
-			: valNoCents;
-
-		return valDigits ?? '';
+		return value?.replace(/\D/g, '') ?? '';
 	};
 
 	return {
