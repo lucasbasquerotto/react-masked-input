@@ -39,8 +39,59 @@ export const useMask = ({
 	const [needUpdateCursor, setNeedUpdateCursor] = React.useState(false);
 
 	const updateDisplayValue = React.useCallback(
-		(value: string, updateCursorFlag?: boolean) => {
-			if (updateCursorFlag && getCursorPosition) {
+		(value: string, userInput?: boolean) => {
+			if (userInput && getCursorPosition) {
+				// Remove static chars after the cursor position to not be duplicated
+				// after the mask is applied (when the mask starts with static chars,
+				// but the user types before those chars, the mask generator will
+				// add the static chars automatically)
+				// See: https://github.com/lucasbasquerotto/react-masked-input/issues/3
+				if (value && maskGenerator) {
+					const cursorPosition = getCursorPosition();
+					const afterStr =
+						cursorPosition <= value?.length
+							? value?.substring(cursorPosition)
+							: undefined;
+
+					if (afterStr) {
+						const currentMask = maskGenerator.generateMask(value);
+						let initialStaticChars = '';
+						let idx = 0;
+						let currentChar = currentMask?.charAt(idx);
+
+						while (currentChar && !maskGenerator.rules.has(currentChar)) {
+							initialStaticChars += currentChar;
+							idx++;
+							currentChar = currentMask?.charAt(idx);
+						}
+
+						if (initialStaticChars) {
+							let startChars = '';
+							let afterChars = initialStaticChars;
+
+							while (
+								afterChars &&
+								value.startsWith(startChars) &&
+								!afterStr.startsWith(afterChars)
+							) {
+								startChars += afterChars?.charAt(0);
+								afterChars = afterChars.substring(1);
+							}
+
+							if (
+								afterChars &&
+								value.startsWith(startChars) &&
+								afterStr.startsWith(afterChars)
+							) {
+								value =
+									value.substring(0, cursorPosition) +
+									value.substring(cursorPosition + afterChars.length);
+							}
+						}
+					}
+				}
+
+				// Updates the cursor position when the user types a char
 				const cursorPosition = getCursorPosition();
 				lastCursorPositionRef.current = cursorPosition;
 				cursorBeforeMaskValueRef.current = value;
@@ -64,7 +115,7 @@ export const useMask = ({
 				setValue(processedValue ?? undefined);
 				lastMaskRef.current = maskGenerator;
 
-				if (transformOffset && updateCursorFlag && getCursorPosition) {
+				if (transformOffset && userInput && getCursorPosition) {
 					const cursorPosition = getCursorPosition();
 					const newCursorPosition = cursorPosition + transformOffset;
 					lastCursorPositionRef.current = newCursorPosition;

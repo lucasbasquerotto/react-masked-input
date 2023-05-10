@@ -4,6 +4,7 @@ import CustomDOMComponent from './examples/custom-dom-component';
 import CustomRules from './examples/custom-rules';
 import DynamicMask from './examples/dynamic-mask';
 import DynamicNumberMask from './examples/dynamic-number-mask';
+import Issue3 from './examples/issues/issue-3';
 import Quickstart from './examples/quickstart';
 import useMyMask from './examples/use-my-mask';
 import './styles.css';
@@ -126,6 +127,14 @@ export default function App() {
 					<div className="info">
 						Masked: {mask(value, customHookMaskGenerator)}
 					</div>
+				</div>
+			</div>
+
+			<div className="section issue" data-testid="issue-3">
+				<h2 className="title">Issue #3</h2>
+
+				<div className="content">
+					<Issue3 />
 				</div>
 			</div>
 		</div>

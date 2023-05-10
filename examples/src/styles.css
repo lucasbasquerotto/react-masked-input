@@ -75,3 +75,7 @@ input {
 .info:first-of-type {
 	margin-top: 15px;
 }
+
+.issue {
+	display: none;
+}

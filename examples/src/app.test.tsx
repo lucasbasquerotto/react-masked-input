@@ -11,7 +11,9 @@ const testSection = (
 ) => {
 	it(sectionName, async () => {
 		render(<App />);
+
 		const section = await screen.findByTestId(sectionName);
+		section.classList.remove('issue');
 		const input = section.querySelector('input');
 		expect(input).toBeInTheDocument();
 
@@ -852,4 +854,94 @@ testSection('currency-mask', async (input) => {
 	await userEvent.keyboard('{backspace}');
 	expect(input).toHaveValue('');
 	expectPosition(input, 0);
+});
+
+// Issues:
+
+testSection('issue-3', async (input) => {
+	expect(input).toHaveValue('');
+	expectPosition(input, 0);
+
+	await clearInput(input);
+	await userEvent.keyboard('000000000');
+	expect(input).toHaveValue('+63(900) 000-00-00');
+	expectPosition(input, 18);
+	await userEvent.keyboard('0');
+	expect(input).toHaveValue('+63(900) 000-00-00');
+	expectPosition(input, 18);
+	input.selectionStart = 0;
+	input.selectionEnd = 0;
+	await userEvent.keyboard('1');
+	expect(input).toHaveValue('+63(910) 000-00-00');
+	expectPosition(input, 6);
+
+	await clearInput(input);
+	await userEvent.keyboard('000000000');
+	expect(input).toHaveValue('+63(900) 000-00-00');
+	expectPosition(input, 18);
+	input.selectionStart = 1;
+	input.selectionEnd = 1;
+	await userEvent.keyboard('1');
+	expect(input).toHaveValue('+63(910) 000-00-00');
+	expectPosition(input, 6);
+
+	await clearInput(input);
+	await userEvent.keyboard('000000000');
+	expect(input).toHaveValue('+63(900) 000-00-00');
+	expectPosition(input, 18);
+	input.selectionStart = 2;
+	input.selectionEnd = 2;
+	await userEvent.keyboard('1');
+	expect(input).toHaveValue('+63(910) 000-00-00');
+	expectPosition(input, 6);
+
+	await clearInput(input);
+	await userEvent.keyboard('000000000');
+	expect(input).toHaveValue('+63(900) 000-00-00');
+	expectPosition(input, 18);
+	input.selectionStart = 3;
+	input.selectionEnd = 3;
+	await userEvent.keyboard('1');
+	expect(input).toHaveValue('+63(910) 000-00-00');
+	expectPosition(input, 6);
+
+	await clearInput(input);
+	await userEvent.keyboard('000000000');
+	expect(input).toHaveValue('+63(900) 000-00-00');
+	expectPosition(input, 18);
+	input.selectionStart = 4;
+	input.selectionEnd = 4;
+	await userEvent.keyboard('1');
+	expect(input).toHaveValue('+63(910) 000-00-00');
+	expectPosition(input, 6);
+
+	await clearInput(input);
+	await userEvent.keyboard('000000000');
+	expect(input).toHaveValue('+63(900) 000-00-00');
+	expectPosition(input, 18);
+	input.selectionStart = 5;
+	input.selectionEnd = 5;
+	await userEvent.keyboard('1');
+	expect(input).toHaveValue('+63(910) 000-00-00');
+	expectPosition(input, 6);
+
+	await clearInput(input);
+	await userEvent.keyboard('000000000');
+	expect(input).toHaveValue('+63(900) 000-00-00');
+	expectPosition(input, 18);
+	input.selectionStart = 6;
+	input.selectionEnd = 6;
+	await userEvent.keyboard('1');
+	expect(input).toHaveValue('+63(901) 000-00-00');
+	expectPosition(input, 7);
+
+	await clearInput(input);
+	await userEvent.keyboard('000000000');
+	expect(input).toHaveValue('+63(900) 000-00-00');
+	expectPosition(input, 18);
+	input.selectionStart = 7;
+	input.selectionEnd = 7;
+	await userEvent.keyboard('1');
+	expect(input).toHaveValue('+63(900) 100-00-00');
+	expectPosition(input, 10);
 });
