@@ -12,7 +12,6 @@ interface NativeSelectionWrapper {
 }
 
 interface TextInputProps {
-	value?: string | undefined;
 	setNativeProps: (props: NativeSelectionWrapper) => void;
 }
 
@@ -59,10 +58,11 @@ export const useNativeMask = <T extends TextInputProps>({
 
 				if (waitToUpdateCursor) {
 					setTimeout(() => {
+						selectionRef.current = selection;
 						el.setNativeProps({
 							selection,
 						});
-					}, 0);
+					}, 20);
 				} else {
 					el.setNativeProps({
 						selection,
