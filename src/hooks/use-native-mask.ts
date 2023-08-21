@@ -12,6 +12,7 @@ interface NativeSelectionWrapper {
 }
 
 interface TextInputProps {
+	value?: string | undefined;
 	setNativeProps: (props: NativeSelectionWrapper) => void;
 }
 
@@ -20,19 +21,22 @@ export const useNativeMask = <T extends TextInputProps>({
 	value,
 	onChange,
 	keepMask,
+	waitToUpdateCursor,
 	ref: outerRef,
 }: {
 	maskGenerator?: MaskGenerator;
 	value?: string;
 	onChange?: (value: string) => void;
 	keepMask?: boolean;
+	waitToUpdateCursor?: boolean;
 	ref?: React.ForwardedRef<T>;
 }) => {
 	const selectionRef = React.useRef({ start: 0, end: 0 });
 
 	const onSelectionChange = React.useCallback(
 		(event: { nativeEvent: NativeSelectionWrapper }) => {
-			selectionRef.current = event.nativeEvent.selection;
+			const selection = event.nativeEvent.selection;
+			selectionRef.current = selection;
 		},
 		[],
 	);
@@ -52,12 +56,21 @@ export const useNativeMask = <T extends TextInputProps>({
 			if (el?.setNativeProps) {
 				const selection = { start: cursorPosition, end: cursorPosition };
 				selectionRef.current = selection;
-				el.setNativeProps({
-					selection,
-				});
+
+				if (waitToUpdateCursor) {
+					setTimeout(() => {
+						el.setNativeProps({
+							selection,
+						});
+					}, 0);
+				} else {
+					el.setNativeProps({
+						selection,
+					});
+				}
 			}
 		},
-		[],
+		[waitToUpdateCursor],
 	);
 
 	const { displayValue, setDisplayValue, ref } = useRefMask({
@@ -81,7 +94,7 @@ export const useNativeMask = <T extends TextInputProps>({
 			ref.current?.setNativeProps({ selection });
 			return setDisplayValue(text);
 		},
-		[setDisplayValue, displayValue, ref],
+		[setDisplayValue, ref, displayValue],
 	);
 
 	return {
