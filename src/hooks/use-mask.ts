@@ -102,6 +102,7 @@ export const useMask = ({
 				setDisplayValue('');
 				setValue('');
 				lastMaskRef.current = undefined;
+				lastOuterValueRef.current = '';
 				return { displayValue: '' };
 			} else if (maskGenerator) {
 				const {
@@ -114,6 +115,7 @@ export const useMask = ({
 				setDisplayValue(maskedValue ?? undefined);
 				setValue(processedValue ?? undefined);
 				lastMaskRef.current = maskGenerator;
+				lastOuterValueRef.current = processedValue ?? undefined;
 
 				if (transformOffset && userInput && getCursorPosition) {
 					const cursorPosition = getCursorPosition();
@@ -128,6 +130,7 @@ export const useMask = ({
 				setDisplayValue(value);
 				setValue(value);
 				lastMaskRef.current = undefined;
+				lastOuterValueRef.current = value ?? undefined;
 				return { displayValue: value };
 			}
 		},
