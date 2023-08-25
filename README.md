@@ -312,7 +312,7 @@ This hook is similar to the `useWebMask` hook, except that it's to be used in a 
 ```tsx
 import React from 'react';
 import { useNativeMask } from 'react-hook-mask';
-import { TextInput } from 'react-native';
+import { Platform, TextInput } from 'react-native';
 
 const MaskedInput = React.forwardRef(
     (
@@ -324,6 +324,7 @@ const MaskedInput = React.forwardRef(
             value: outerValue,
             onChange,
             keepMask,
+            waitToUpdateCursor: Platform.OS === 'ios',
             ref: outerRef,
         });
 
@@ -341,5 +342,7 @@ const MaskedInput = React.forwardRef(
 
 export default MaskedInput;
 ```
+
+Define the property `waitToUpdateCursor` as `true` on iOS to delay the cursor position update for some milliseconds, otherwise the cursor may end up in a wrong position when changing the value of the input.
 
 The native component can be used in the same way as any other mask component, [as shown previously](#quickstart).
